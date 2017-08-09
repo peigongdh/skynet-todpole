@@ -1,0 +1,4 @@
+/run/DUMMY
+/run/skynet.log
+/run/skynet.pid
+/luaclib/cjson.so
