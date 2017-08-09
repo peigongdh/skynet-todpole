@@ -1,5 +1,5 @@
 local skynet = require "skynet"
-local socket = require "socket"
+local socket = require "skynet.socket"
 local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
 local urllib = require "http.url"
@@ -70,7 +70,7 @@ else
 
 skynet.start(function()
 	local agent = {}
-	for i= 1, 20 do
+	for i= 1, 10 do
 		agent[i] = skynet.newservice(SERVICE_NAME, "agent")
 	end
 	local balance = 1
