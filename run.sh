@@ -5,7 +5,7 @@ export DAEMON=false
 while getopts "Dk" arg
 do
 	case $arg in
-		D)
+		d)
 			export DAEMON=true
 			;;
 		k)
