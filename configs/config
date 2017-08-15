@@ -10,6 +10,6 @@ lua_cpath = "./luaclib/?.so;./skynet/luaclib/?.so"
 cpath = "./cservice/?.so;./skynet/cservice/?.so"
 
 if $DAEMON then
-	logger = "./skynet.log"
-	daemon = "./skynet.pid"
+	logger = "./run/skynet.log"
+	daemon = "./run/skynet.pid"
 end
