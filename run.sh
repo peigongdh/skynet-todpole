@@ -2,7 +2,7 @@
 export ROOT=$(cd `dirname $0`; pwd)
 export DAEMON=false
 
-while getopts "Dk" arg
+while getopts "dk" arg
 do
 	case $arg in
 		d)
