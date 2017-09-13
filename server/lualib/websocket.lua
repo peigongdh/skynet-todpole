@@ -31,10 +31,10 @@ local function challenge_response(key, protocol)
 
     local accept = crypt.base64encode(crypt.sha1(key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
     return string.format("HTTP/1.1 101 Switching Protocols\r\n" ..
-            "Upgrade: websocket\r\n" ..
-            "Connection: Upgrade\r\n" ..
-            "Sec-WebSocket-Accept: %s\r\n" ..
-            "%s\r\n", accept, protocol)
+    "Upgrade: websocket\r\n" ..
+    "Connection: Upgrade\r\n" ..
+    "Sec-WebSocket-Accept: %s\r\n" ..
+    "%s\r\n", accept, protocol)
 end
 
 local function accept_connection(header, check_origin, check_origin_ok)
@@ -304,11 +304,14 @@ function ws:recv_frame()
     if not final_frame then
         return true, false, frame_data
     else
-        if frame_opcode == 0x1 then -- text
+        if frame_opcode == 0x1 then
+            -- text
             return true, true, frame_data
-        elseif frame_opcode == 0x2 then -- binary
+        elseif frame_opcode == 0x2 then
+            -- binary
             return true, true, frame_data
-        elseif frame_opcode == 0x8 then -- close
+        elseif frame_opcode == 0x8 then
+            -- close
             local code, reason
             if #frame_data >= 2 then
                 code = string.unpack(">H", frame_data:sub(1, 2))
@@ -319,9 +322,11 @@ function ws:recv_frame()
             self.client_terminated = true
             self:close()
             self.handler.on_close(self, code, reason)
-        elseif frame_opcode == 0x9 then --Ping
+        elseif frame_opcode == 0x9 then
+            --Ping
             self:send_pong()
-        elseif frame_opcode == 0xA then -- Pong
+        elseif frame_opcode == 0xA then
+            -- Pong
             self.handler.on_pong(self, frame_data)
         end
 

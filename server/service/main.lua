@@ -1,11 +1,14 @@
 local skynet = require "skynet"
+local logger = require "logger"
 
 skynet.start(function()
-    skynet.error("Server start")
-    if not skynet.getenv "daemon" then
-        local console = skynet.newservice("console")
+    logger.info("main", "Server start")
+
+    local debug_console_port = skynet.getenv("debug_console_port") or 8000
+    if debug_console_port then
+        skynet.newservice("debug_console", tonumber(debug_console_port))
     end
-    -- skynet.newservice("debug_console", 8000)
+
     skynet.newservice("simpleweb")
     skynet.newservice("events")
     skynet.exit()
