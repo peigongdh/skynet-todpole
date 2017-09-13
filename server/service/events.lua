@@ -3,7 +3,6 @@ local socket = require "socket"
 local string = require "string"
 local websocket = require "websocket"
 local httpd = require "http.httpd"
-local urllib = require "http.url"
 local sockethelper = require "http.sockethelper"
 
 local cjson = require("cjson")
@@ -90,10 +89,10 @@ end
 
 skynet.start(function()
     local address = "0.0.0.0:8002"
-    skynet.error("Listening "..address)
+    skynet.error("Listening " .. address)
     local id = assert(socket.listen(address))
-    socket.start(id , function(id, addr)
-       socket.start(id)
-       pcall(handle_socket, id)
+    socket.start(id, function(id, addr)
+        socket.start(id)
+        pcall(handle_socket, id)
     end)
 end)

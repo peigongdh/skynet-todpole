@@ -31,11 +31,10 @@ local function challenge_response(key, protocol)
 
     local accept = crypt.base64encode(crypt.sha1(key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))
     return string.format("HTTP/1.1 101 Switching Protocols\r\n" ..
-                        "Upgrade: websocket\r\n" ..
-                        "Connection: Upgrade\r\n" ..
-                        "Sec-WebSocket-Accept: %s\r\n" ..
-                        "%s\r\n", accept, protocol)
-    
+            "Upgrade: websocket\r\n" ..
+            "Connection: Upgrade\r\n" ..
+            "Sec-WebSocket-Accept: %s\r\n" ..
+            "%s\r\n", accept, protocol)
 end
 
 local function accept_connection(header, check_origin, check_origin_ok)
@@ -46,7 +45,7 @@ local function accept_connection(header, check_origin, check_origin_ok)
 
     -- Connection header should be upgrade. Some proxy servers/load balancers
     -- might mess with it.
-    if not header["connection"] or not header["connection"]:lower():find("upgrade", 1,true) then
+    if not header["connection"] or not header["connection"]:lower():find("upgrade", 1, true) then
         return 400, "\"Connection\" must be \"Upgrade\"."
     end
 
@@ -68,14 +67,13 @@ local function accept_connection(header, check_origin, check_origin_ok)
         return 400, "\"Sec-WebSocket-Key\" must not be  nil."
     end
 
-    local protocol = header["sec-websocket-protocol"] 
+    local protocol = header["sec-websocket-protocol"]
     if protocol then
         local i = protocol:find(",", 1, true)
-        protocol = "Sec-WebSocket-Protocol: " .. protocol:sub(1, i or i-1)
+        protocol = "Sec-WebSocket-Protocol: " .. protocol:sub(1, i or i - 1)
     end
 
     return nil, challenge_response(key, protocol)
-
 end
 
 local H = {}
@@ -85,20 +83,16 @@ function H.check_origin_ok(origin, host)
 end
 
 function H.on_open(ws)
-    
 end
 
 function H.on_message(ws, message)
-   
 end
 
 function H.on_close(ws, code, reason)
-    
 end
 
 function H.on_pong(ws, data)
     -- Invoked when the response to a ping frame is received.
-
 end
 
 
@@ -127,7 +121,7 @@ function ws.new(id, header, handler, conf)
     }
 
     self.handler.on_open(self)
- 
+
     return setmetatable(self, ws_mt)
 end
 
@@ -153,7 +147,7 @@ function ws:send_frame(fin, opcode, data)
         frame = frame .. string.pack("B", l | mask_bit)
     elseif l < 0xFFFF then
         frame = frame .. string.pack(">BH", 126 | mask_bit, l)
-    else 
+    else
         frame = frame .. string.pack(">BL", 127 | mask_bit, l)
     end
 
@@ -163,7 +157,6 @@ function ws:send_frame(fin, opcode, data)
     frame = frame .. data
 
     write(self.id, frame)
-    
 end
 
 function ws:send_text(data)
@@ -227,8 +220,8 @@ end
 
 local function websocket_mask(mask, data, length)
     local umasked = {}
-    for i=1, length do
-        umasked[i] = string.char(string.byte(data, i) ~ string.byte(mask, (i-1)%4 + 1))
+    for i = 1, length do
+        umasked[i] = string.char(string.byte(data, i) ~ string.byte(mask, (i - 1) % 4 + 1))
     end
     return table.concat(umasked)
 end
@@ -294,7 +287,7 @@ function ws:recv_frame()
 
     --print('final_frame:', final_frame, "frame_opcode:", frame_opcode, "mask_frame:", mask_frame, "frame_length:", frame_length)
 
-    local  frame_data = ""
+    local frame_data = ""
     if frame_length > 0 then
         local fdata, err = read(self.id, frame_length)
         if not fdata then
@@ -311,14 +304,14 @@ function ws:recv_frame()
     if not final_frame then
         return true, false, frame_data
     else
-        if frame_opcode  == 0x1 then -- text
+        if frame_opcode == 0x1 then -- text
             return true, true, frame_data
         elseif frame_opcode == 0x2 then -- binary
             return true, true, frame_data
         elseif frame_opcode == 0x8 then -- close
             local code, reason
             if #frame_data >= 2 then
-                code = string.unpack(">H", frame_data:sub(1,2))
+                code = string.unpack(">H", frame_data:sub(1, 2))
             end
             if #frame_data > 2 then
                 reason = frame_data:sub(3)
@@ -334,7 +327,6 @@ function ws:recv_frame()
 
         return true, true, nil
     end
-
 end
 
 function ws:start()

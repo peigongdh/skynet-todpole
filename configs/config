@@ -1,15 +1,27 @@
-thread = 8
-logpath = "./run"
+app_root = "./"
+skynet_root = "./skynet/"
+
+thread = 1
+logger = nil
 harbor = 0
 start = "main"
 bootstrap = "snlua bootstrap"
-luaservice = "./service/?.lua;./skynet/service/?.lua"
-lualoader = "./skynet/lualib/loader.lua"
-lua_path = "./lualib/?.lua;./skynet/lualib/?.lua;./skynet/lualib/compat10/?.lua"
-lua_cpath = "./luaclib/?.so;./skynet/luaclib/?.so"
-cpath = "./cservice/?.so;./skynet/cservice/?.so"
+
+luaservice = skynet_root .. "service/?.lua;" .. app_root .. "server/service/?.lua"
+lualoader = skynet_root .. "lualib/loader.lua"
+
+lua_path = app_root .. "server/lualib/?.lua;" .. skynet_root ..  "lualib/?.lua;" .. skynet_root .. "lualib/compat10/?.lua"
+lua_cpath = skynet_root .. "luaclib/?.so;" .. app_root .. "server/luaclib/?.so"
+cpath = skynet_root .. "cservice/?.so"
+
+snax = app_root .. "server/service/?.lua"
 
 if $DAEMON then
 	logger = "./run/skynet.log"
 	daemon = "./run/skynet.pid"
 end
+
+--value: debug | info | warn | error
+log_level = "debug"
+
+debug_console_port = 8080
