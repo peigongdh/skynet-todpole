@@ -3,6 +3,8 @@ local socket = require "skynet.socket"
 local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
 local urllib = require "http.url"
+local logger = require "logger"
+
 local table = table
 local string = string
 
@@ -14,7 +16,7 @@ if mode == "agent" then
         local ok, err = httpd.write_response(sockethelper.writefunc(id), ...)
         if not ok then
             -- if err == sockethelper.socket_error , that means socket closed.
-            skynet.error(string.format("fd = %d, %s", id, err))
+            logger.info("simpleweb", string.format("fd = %d, %s", id, err))
         end
     end
 
@@ -69,15 +71,17 @@ if mode == "agent" then
 else
 
     skynet.start(function()
+        local simpleweb_agentpool = skynet.getenv("simpleweb_agentpool") or 10
         local agent = {}
-        for i = 1, 10 do
+        for i = 1, simpleweb_agentpool do
             agent[i] = skynet.newservice(SERVICE_NAME, "agent")
         end
         local balance = 1
-        local id = socket.listen("0.0.0.0", 8001)
-        skynet.error("Listen web port 8001")
+        local simpleweb_port = skynet.getenv("simpleweb_port") or 8001
+        local id = socket.listen("0.0.0.0", simpleweb_port)
+        logger.info("simpleweb", "Listen web port: ", simpleweb_port)
         socket.start(id, function(id, addr)
-            skynet.error(string.format("%s connected, pass it to agent :%08x", addr, agent[balance]))
+            logger.info("simpleweb", string.format("%s connected, pass it to agent :%08x", addr, agent[balance]))
             skynet.send(agent[balance], "lua", id)
             balance = balance + 1
             if balance > #agent then

@@ -4,21 +4,22 @@ local string = require "string"
 local websocket = require "websocket"
 local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
-
 local cjson = require("cjson")
+local logger = require("logger")
+
 local connection = {}
 
 local handler = {}
 function handler.on_open(ws)
-    print(string.format("%d::open", ws.id))
+    logger.debug("events", string.format("%d::open", ws.id))
     connection[ws.id] = ws
 end
 
 function handler.on_message(ws, message)
-    print(string.format("%d receive:%s", ws.id, message))
+    logger.debug("events", string.format("%d receive:%s", ws.id, message))
     local messageObj = cjson.decode(message);
     if messageObj.type == "authorize" then
-        print(string.format("%d receive:%s", ws.id, message))
+        logger.debug("events", string.format("%d receive:%s", ws.id, message))
     elseif messageObj.type == "update" then
         local sendMessage = {
             type = "update",
@@ -52,7 +53,7 @@ function handler.on_message(ws, message)
 end
 
 function handler.on_close(ws, code, reason)
-    print(string.format("%d close:%s  %s", ws.id, code, reason))
+    logger.debug("events", string.format("%d close:%s  %s", ws.id, code, reason))
     local sendMessage = {
         type = "closed",
         id = ws.id
@@ -88,9 +89,9 @@ local function handle_socket(id)
 end
 
 skynet.start(function()
-    local address = "0.0.0.0:8002"
-    skynet.error("Listening " .. address)
-    local id = assert(socket.listen(address))
+    local websocket_port = skynet.getenv("websocket_port") or 8002
+    logger.info("events", "Listen websocket port: ", websocket_port)
+    local id = assert(socket.listen("0.0.0.0", websocket_port))
     socket.start(id, function(id, addr)
         socket.start(id)
         pcall(handle_socket, id)

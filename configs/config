@@ -21,7 +21,16 @@ if $DAEMON then
 	daemon = "./run/skynet.pid"
 end
 
---value: debug | info | warn | error
+-- log config
+-- value: debug | info | warn | error
 log_level = "debug"
 
+-- debug config
 debug_console_port = 8000
+
+-- web config
+simpleweb_port = 8001
+simpleweb_agentpool = 10
+
+-- websocket
+websocket_port = 8002
