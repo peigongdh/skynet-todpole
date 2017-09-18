@@ -4,6 +4,7 @@ local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
 local urllib = require "http.url"
 local logger = require "logger"
+local socket_extend = require "socket_extend"
 
 local table = table
 local string = string
@@ -13,7 +14,7 @@ local mode = ...
 if mode == "agent" then
 
     local function response(id, ...)
-        local ok, err = httpd.write_response(sockethelper.writefunc(id), ...)
+        local ok, err = httpd.write_response(socket_extend.writefunc(id), ...)
         if not ok then
             -- if err == sockethelper.socket_error , that means socket closed.
             logger.info("simpleweb", string.format("fd = %d, %s", id, err))
@@ -31,7 +32,7 @@ if mode == "agent" then
         skynet.dispatch("lua", function(_, _, id)
             socket.start(id)
             -- limit request body size to 8192 (you can pass nil to unlimit)
-            local code, url, method, header, body = httpd.read_request(sockethelper.readfunc(id), 8192)
+            local code, url, method, header, body = httpd.read_request(sockethelper.readfunc(id), nil)
             if code then
                 if code ~= 200 then
                     response(id, code)
@@ -52,10 +53,10 @@ if mode == "agent" then
                     for k, v in pairs(header) do
                         table.insert(tmp, string.format("%s = %s", k, v))
                     end
-                    body = read_file(path)
+                    local response_body = read_file(path)
                     -- table.insert(tmp, "-----body----\n" .. body)
                     -- response(id, code, table.concat(tmp,"\n"))
-                    response(id, code, body)
+                    response(id, code, response_body)
                 end
             else
                 if url == sockethelper.socket_error then

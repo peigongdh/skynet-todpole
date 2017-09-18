@@ -11,5 +11,6 @@ skynet.start(function()
 
     skynet.newservice("simpleweb")
     skynet.newservice("events")
+    --skynet.newservice("testsocket", "", 0)
     skynet.exit()
 end)

@@ -34,3 +34,6 @@ simpleweb_agentpool = 10
 
 -- websocket
 websocket_port = 8002
+
+-- socket
+write_buffer_size = 83096
