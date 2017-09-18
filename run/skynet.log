@@ -1,7 +1,37 @@
 [:00000001] LAUNCH logger ./run/skynet.log
 [:00000002] LAUNCH snlua bootstrap
-[:00000002] lua loader error : ./skynet/lualib/loader.lua:24: cannot open ./skynet/service/bootstrap.lua./server/service/bootstrap.lua: No such file or directory
+[:00000003] LAUNCH snlua launcher
+[:00000004] LAUNCH snlua cdummy
+[:00000005] LAUNCH harbor 0 4
+[:00000006] LAUNCH snlua datacenterd
+[:00000007] LAUNCH snlua service_mgr
+[:00000008] LAUNCH snlua main
+[:00000008] [2017-09-18 21:26:59] [info] [main] Server start
+[:00000009] LAUNCH snlua debug_console 8000
+[:00000009] init service failed: ./skynet/lualib/skynet/socket.lua:360: Listen error
+stack traceback:
+	[C]: in function 'skynet.socketdriver.listen'
+	./skynet/lualib/skynet/socket.lua:360: in function 'skynet.socket.listen'
+	./skynet/service/debug_console.lua:120: in local 'start'
+	./skynet/lualib/skynet.lua:629: in function <./skynet/lualib/skynet.lua:626>
+	[C]: in function 'xpcall'
+	./skynet/lualib/skynet.lua:633: in function 'skynet.pcall'
+	./skynet/lualib/skynet.lua:637: in function 'skynet.init_service'
+	./skynet/lualib/skynet.lua:650: in upvalue 'f'
+	./skynet/lualib/skynet.lua:106: in function <./skynet/lualib/skynet.lua:105>
+[:00000009] KILL self
+[:00000008] init service failed: ./skynet/lualib/skynet.lua:391: call failed
 stack traceback:
 	[C]: in function 'error'
-	./skynet/lualib/loader.lua:24: in main chunk
+	./skynet/lualib/skynet.lua:391: in upvalue 'yield_call'
+	./skynet/lualib/skynet.lua:402: in function 'skynet.call'
+	(...tail calls...)
+	./server/service/main.lua:9: in local 'start'
+	./skynet/lualib/skynet.lua:629: in function <./skynet/lualib/skynet.lua:626>
+	[C]: in function 'xpcall'
+	./skynet/lualib/skynet.lua:633: in function 'skynet.pcall'
+	./skynet/lualib/skynet.lua:637: in function 'skynet.init_service'
+	./skynet/lualib/skynet.lua:650: in upvalue 'f'
+	./skynet/lualib/skynet.lua:106: in function <./skynet/lualib/skynet.lua:105>
+[:00000008] KILL self
 [:00000002] KILL self

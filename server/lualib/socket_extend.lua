@@ -15,7 +15,6 @@ function socket_extend.writefunc(fd)
         while #content > write_buffer_size do
             local content_chip = string.sub(content, 1, write_buffer_size)
             local ok = writebytes(fd, content_chip)
-            print(ok)
             if not ok then
                 error(socket_error)
             end
