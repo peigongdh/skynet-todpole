@@ -5,6 +5,9 @@
 
 local gateserver_extend = require("gateserver_extend")
 
+-- use for command_handler
+local CMD = {}
+
 -- register for gateserver_extend
 
 local handler = {}
@@ -45,8 +48,9 @@ function handler.disconnect_handler(uid)
 end
 
 --
-function handler.command_handler()
-
+function handler.command_handler(cmd, source, ...)
+    local f = assert(CMD[cmd])
+    return f(source, ...)
 end
 
 -- end for gateserver_extend register
