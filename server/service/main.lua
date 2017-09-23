@@ -12,5 +12,18 @@ skynet.start(function()
     skynet.newservice("simpleweb")
     skynet.newservice("events")
     --skynet.newservice("testsocket", "", 0)
+
+    local loginservice = skynet.uniqueservice("login_implement")
+    local gateservice = skynet.uniqueservice("gate_implement")
+    local watchdog = skynet.uniqueservice("watchdog")
+
+    local gateconf = {
+        servername = "gateserver1",
+        loginservice = loginservice,
+        gateservice = gateservice
+    }
+
+    skynet.call(watchdog, "lua", "start", gateconf)
+
     skynet.exit()
 end)

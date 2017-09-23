@@ -178,9 +178,9 @@ function server.start(handler)
         end
     end
 
+    -- register for gateserver
     local gateserver_handler = {}
 
-    -- register for gateserver
     function gateserver_handler.connect(fd, ipaddr)
         logger.info("gateserver_extend", "new connection", fd, ipaddr)
         handshake[fd] = ipaddr
@@ -214,8 +214,13 @@ function server.start(handler)
         return result
     end
 
-    function gateserver_handler.open(source, conf)
-        -- register to loginserver
+    -- called by watchdog
+    function gateserver_handler.open(source, gateconf)
+        local servername = assert(source.servername)
+        local loginservice = source.loginservice
+
+        -- register self to loginserver
+        handler.register_handler(source, loginservice, servername)
     end
 
     function gateserver_handler.message(fd, msg, sz)

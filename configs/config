@@ -37,3 +37,9 @@ websocket_port = 8002
 
 -- socket
 write_buffer_size = 83096
+
+-- loginserver config
+loginserver_host = 127.0.0.1
+loginserver_port = 8003
+loginserver_slave_instance = 8
+

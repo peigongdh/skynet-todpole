@@ -22,7 +22,7 @@ if mode == "agent" then
     end
 
     local function read_file(filename)
-        local f = assert(io.open("web" .. filename, 'r'))
+        local f = assert(io.open("web" .. filename, "r"))
         local content = f:read("*all")
         f:close()
         return content
