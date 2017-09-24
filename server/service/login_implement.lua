@@ -55,13 +55,14 @@ end
 -- verify token and return servername, uid for user
 function handler.auth_handler(token)
     -- the token is base64(user)@base64(server):base64(password)
+    logger.info("login_implement", "login auth token", token)
     local user, servername, password = token:match("([^@]+)@([^:]+):(.+)")
 end
 
 -- notify gateserver to login this user
 function handler.login_handler(servername, uid, secret)
     if not gateserver_list[servername] then
-        logger.error("login_implement", "user", "uid", "want login to unknown server: ", servername)
+        logger.error("login_implement", "user", "uid", "want login to unknown server:", servername)
         error("unknown server")
     end
 
