@@ -39,7 +39,14 @@ websocket_port = 8002
 write_buffer_size = 83096
 
 -- loginserver config
-loginserver_host = 127.0.0.1
+loginserver_host = "127.0.0.1"
 loginserver_port = 8003
 loginserver_slave_instance = 8
 
+-- third party authenticate config (in loginserver)
+auth_host = "192.168.3.2"
+auth_url = "/auth.php"
+
+-- gateserver config
+gateserver_host = "127.0.0.1"
+gateserver_port = 8004

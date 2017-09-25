@@ -7,7 +7,6 @@ local skynet = require("skynet")
 local gateserver_extend = require("gateserver_extend")
 local logger = require("logger")
 
-
 -- init in handler.register_handler
 local watchdog
 local loginservice
@@ -18,6 +17,11 @@ local users = {}
 
 -- use for command_handler
 local CMD = {}
+
+skynet.register_protocol {
+    name = "client",
+    id = skynet.PTYPE_CLIENT,
+}
 
 -- register for gateserver_extend
 local handler = {}

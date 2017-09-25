@@ -4,7 +4,9 @@
 ---
 
 local skynet = require("skynet")
-local login = require("loginserver")
+local loginserver_extend = require("loginserver_extend")
+local crypt = require("skynet.crypt")
+local auth = require("auth")
 local logger = require("logger")
 
 -- load config
@@ -30,6 +32,26 @@ local gateserver_list = {}
 -- init in login_handler
 -- uid -> {uid, servername, address}
 local onlineuser_list = {}
+
+-- authenticate token and try to get uid
+local function authenticate(platform, token)
+    local uid
+
+    if auth[platform] then
+        local func = auth[platform]
+        uid = func(platform, token)
+
+        if not uid then
+            logger.error("login_implement", "auth failed", platform, token)
+            error(string.format("platform: %s unexpected error verify token: %s", platform, token))
+        end
+    else
+        logger.error("login_implement", "invalid platform", platform)
+        error("invalid platform" .. platform)
+    end
+
+    return uid
+end
 
 -- use for command_handler
 local CMD = {}
@@ -58,7 +80,15 @@ function handler.auth_handler(token)
     logger.info("login_implement", "login auth token", token)
     local platform, platform_token, servername = token:match("([^@]+)@([^:]+):(.+)")
 
+    platform = crypt.base64decode(platform)
+    platform = crypt.base64decode(platform_token)
+    servername = crypt.base64decode(servername)
 
+    local ok, uid = pcall(authenticate, platform, platform_token)
+    if not ok then
+        logger.info("login_implement", "authenticate failed, token", token)
+        error("authentication failed")
+    end
 
     return servername, uid
 end
@@ -103,4 +133,4 @@ end
 
 -- end for loginserver register
 
-login(handler)
+loginserver_extend(handler)

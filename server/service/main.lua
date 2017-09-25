@@ -11,13 +11,20 @@ skynet.start(function()
 
     skynet.newservice("simpleweb")
     skynet.newservice("events")
-    --skynet.newservice("testsocket", "", 0)
+    -- skynet.newservice("testsocket", "", 0)
 
     local loginservice = skynet.uniqueservice("login_implement")
     local gateservice = skynet.uniqueservice("gate_implement")
     local watchdog = skynet.uniqueservice("watchdog")
 
+    local gateserver_host = skynet.getenv("gateserver_host")
+    local gateserver_port = tonumber(skynet.getenv("gateserver_port"))
+
     local gateconf = {
+        address = gateserver_host,
+        port = gateserver_port,
+        nodelay = true,
+        maxclient = 1024,
         servername = "gateserver1",
         loginservice = loginservice,
         gateservice = gateservice

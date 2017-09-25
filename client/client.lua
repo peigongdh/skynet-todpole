@@ -102,7 +102,7 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
         print("connect to login server failed")
         os.exit()
     else
-        servername = result.server
+        servername = result.servername
         uid = result.uid
         secret = result.secret
     end
@@ -110,7 +110,7 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
     -- auth with gate srever
     local ok, result = pcall(clientsocket.contact_gateserver, servername, uid, handshake_index, secret)
     if not ok or not result then
-        print("auth with game server failed")
+        print("auth with gate server failed")
         os.exist()
     end
 

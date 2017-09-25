@@ -82,17 +82,17 @@ end
 function lib.contact_loginserver()
     local function encode_token(token)
         return string.format("%s@%s:%s",
-        crypt.base64encode(token.sdkid),
+        crypt.base64encode(token.platform),
         crypt.base64encode(token.username .. "\t" .. token.password),
-        crypt.base64encode(token.server)
+        crypt.base64encode(token.servername)
         )
     end
 
     local gateservername
     local uid
     local token = {
-        sdkid = "skynet-todpole",
-        server = servername,
+        platform = "skynet_todpole",
+        servername = servername,
         username = username,
         password = password
     }
@@ -129,7 +129,7 @@ function lib.contact_loginserver()
         uid = tonumber(arr[3])
 
         response.ok = true
-        response.server = gateservername
+        response.servername = gateservername
         response.uid = uid
         response.secret = secret
     end

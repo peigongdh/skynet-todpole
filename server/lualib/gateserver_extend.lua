@@ -5,7 +5,8 @@
 
 local skynet = require("skynet")
 local gateserver = require("snax.gateserver")
-local socket = require("skynet.socket")
+-- can not use socket
+local socketdriver = require("socketdriver")
 local netpack = require("netpack")
 local crypt = require("crypt")
 local logger = require("logger")
@@ -53,11 +54,6 @@ Config for server.start
 ]]
 
 local server = {}
-
-skynet.register_protocol {
-    name = "client",
-    id = skynet.PTYPE_CLIENT,
-}
 
 -- uid -> user {uid, secret, handshake_index, fd, ip}
 local user_online = {}
@@ -120,7 +116,7 @@ function server.start(handler)
 
     local function doauth(fd, message, ipaddr)
         -- format uid@base64(server)#index:base64(hmac)
-        local uid, server, index, hmac = string.match(message, "([^@]*)@([^#]*)#([^:]*):(.*)")
+        local uid, servername, index, hmac = string.match(message, "([^@]*)@([^#]*)#([^:]*):(.*)")
         hmac = base64decode(hmac)
 
         local user = user_online[tonumber(uid)]
@@ -133,7 +129,7 @@ function server.start(handler)
             return "403 Index Expired"
         end
 
-        local text = string.format("%s@%s#%d", uid, server, index)
+        local text = string.format("%s@%s#%d", uid, servername, index)
         -- equivalent to crypt.hmac64(crypt.hashkey(text), user.secret)
         local v = hmac_hash(user.secret, text)
 
@@ -162,7 +158,7 @@ function server.start(handler)
         end
 
         -- notify client handshake result
-        socket.write(fd, netpack.pack(response))
+        socketdriver.send(fd, netpack.pack(response))
 
         if result == nil then
             -- auth success
@@ -215,12 +211,12 @@ function server.start(handler)
     end
 
     -- called by watchdog
-    function gateserver_handler.open(source, gateconf)
-        local servername = assert(source.servername)
-        local loginservice = source.loginservice
+    function gateserver_handler.open(watchdog, gateconf)
+        local servername = assert(gateconf.servername)
+        local loginservice = gateconf.loginservice
 
         -- register self to loginserver
-        handler.register_handler(source, loginservice, servername)
+        handler.register_handler(watchdog, loginservice, servername)
     end
 
     function gateserver_handler.message(fd, msg, sz)
