@@ -5,6 +5,8 @@ local crypt = require "skynet.crypt"
 local table = table
 local string = string
 local assert = assert
+
+local dns = require("dns")
 local logger = require("logger")
 
 --[[
@@ -93,7 +95,7 @@ local function launch_slave(auth_handler)
         local hmac = crypt.hmac64(challenge, secret)
 
         if hmac ~= crypt.base64decode(response) then
-            write("auth", fd, "400 Bad Request\n")
+            write("auth", fd, "400 Bad Request")
             error "challenge failed"
         end
 
@@ -101,9 +103,9 @@ local function launch_slave(auth_handler)
 
         local token = crypt.desdecode(secret, crypt.base64decode(etoken))
 
-        local ok, server, uid = pcall(auth_handler, token)
+        local ok, servername, uid = pcall(auth_handler, token)
 
-        return ok, server, uid, secret
+        return ok, servername, uid, secret
     end
 
     local function ret_pack(ok, err, ...)
@@ -145,30 +147,30 @@ local function accept(conf, s, fd, addr)
 
     if not ok then
         if ok ~= nil then
-            write("response 401", fd, "401 Unauthorized\n")
+            write("response 401", fd, "401 Unauthorized")
         end
         error(server)
     end
 
     if not conf.multilogin then
         if user_login[uid] then
-            write("response 406", fd, "406 Not Acceptable\n")
+            write("response 406", fd, "406 Not Acceptable")
             error(string.format("User %s is already login", uid))
         end
 
         user_login[uid] = true
     end
 
-    local ok, err = pcall(conf.login_handler, server, uid, secret)
+    local ok, gateservername = pcall(conf.login_handler, server, uid, secret)
     -- unlock login
     user_login[uid] = nil
 
     if ok then
-        err = err or ""
-        write("response 200", fd, "200 " .. crypt.base64encode(err) .. "\n")
+        gateservername = gateservername or ""
+        write("response 200", fd, "200 " .. crypt.base64encode(gateservername) .. " " .. uid)
     else
-        write("response 403", fd, "403 Forbidden\n")
-        error(err)
+        write("response 403", fd, "403 Forbidden")
+        error(gateservername)
     end
 end
 

@@ -48,7 +48,6 @@ local function recv_package(last)
     return unpack_package(last .. r)
 end
 
--- wait package for read
 local function blockread_package()
     while true do
         local result
@@ -82,14 +81,14 @@ end
 -- related to loginserver_extend.launch_slave
 function lib.contact_loginserver()
     local function encode_token(token)
-        return string.format("%s:%s@%s",
+        return string.format("%s@%s:%s",
         crypt.base64encode(token.sdkid),
         crypt.base64encode(token.username .. "\t" .. token.password),
         crypt.base64encode(token.server)
         )
     end
 
-    local gateserver
+    local gateservername
     local uid
     local token = {
         sdkid = "skynet-todpole",
@@ -114,6 +113,7 @@ function lib.contact_loginserver()
     token_encoded = crypt.base64encode(token_encoded)
     lib.send_package(token_encoded)
 
+    -- result format: code base64(gateservername) uid
     local result = blockread_package()
     local code = tonumber(string.sub(result, 1, 3))
 
@@ -122,16 +122,14 @@ function lib.contact_loginserver()
         response.ok = false
     else
         local arr = {}
-
         for w in string.gmatch(result, "([^%s]+)") do
             arr[#arr + 1] = w
         end
-
-        gateserver = crypt.base64decode(arr[2])
+        gateservername = crypt.base64decode(arr[2])
         uid = tonumber(arr[3])
 
         response.ok = true
-        response.server = gateserver
+        response.server = gateservername
         response.uid = uid
         response.secret = secret
     end

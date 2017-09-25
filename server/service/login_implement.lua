@@ -54,9 +54,13 @@ end
 
 -- verify token and return servername, uid for user
 function handler.auth_handler(token)
-    -- the token is base64(user)@base64(server):base64(password)
+    -- the token is base64(platform)@base64(platform_token):base64(servername)
     logger.info("login_implement", "login auth token", token)
-    local user, servername, password = token:match("([^@]+)@([^:]+):(.+)")
+    local platform, platform_token, servername = token:match("([^@]+)@([^:]+):(.+)")
+
+
+
+    return servername, uid
 end
 
 -- notify gateserver to login this user
