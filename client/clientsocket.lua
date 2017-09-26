@@ -74,6 +74,7 @@ end
 function lib.send_package(pack)
     if fd then
         local package = string.pack(">s2", pack)
+        print(pack .. " send package: " .. package)
         socket.send(fd, package)
     end
 end
@@ -98,9 +99,9 @@ function lib.contact_loginserver()
     }
 
     fd = assert(socket.connect(loginserver_host, loginserver_port))
-    local challenge = crypt.base64encode(blockread_package())
-    local clientkey = crypt.randomkey()
+    local challenge = crypt.base64decode(blockread_package())
 
+    local clientkey = crypt.randomkey()
     lib.send_package(crypt.base64encode(crypt.dhexchange(clientkey)))
 
     local secret = crypt.dhsecret(crypt.base64decode(blockread_package()), clientkey)

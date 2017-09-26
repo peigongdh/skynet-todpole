@@ -99,7 +99,7 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
     print("try to login with login server")
     local ok, result = pcall(clientsocket.contact_loginserver)
     if not ok or not result or not result.ok then
-        print("connect to login server failed")
+        print("connect to login server failed" .. (result or ""))
         os.exit()
     else
         servername = result.servername

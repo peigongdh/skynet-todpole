@@ -81,7 +81,7 @@ function handler.auth_handler(token)
     local platform, platform_token, servername = token:match("([^@]+)@([^:]+):(.+)")
 
     platform = crypt.base64decode(platform)
-    platform = crypt.base64decode(platform_token)
+    platform_token = crypt.base64decode(platform_token)
     servername = crypt.base64decode(servername)
 
     local ok, uid = pcall(authenticate, platform, platform_token)

@@ -69,7 +69,7 @@ local function write(service, fd, text)
 end
 
 local function read(service, fd)
-    assert_socket(service, read_package(fd), fd)
+    return assert_socket(service, read_package(fd), fd)
 end
 
 local function launch_slave(auth_handler)
@@ -86,24 +86,23 @@ local function launch_slave(auth_handler)
         if #clientkey ~= 8 then
             error "Invalid client key"
         end
+
         local serverkey = crypt.randomkey()
         write("auth", fd, crypt.base64encode(crypt.dhexchange(serverkey)))
 
         local secret = crypt.dhsecret(clientkey, serverkey)
-
         local response = read("auth", fd)
         local hmac = crypt.hmac64(challenge, secret)
-
         if hmac ~= crypt.base64decode(response) then
             write("auth", fd, "400 Bad Request")
             error "challenge failed"
         end
 
         local etoken = read("auth", fd)
-
         local token = crypt.desdecode(secret, crypt.base64decode(etoken))
 
         local ok, servername, uid = pcall(auth_handler, token)
+        logger.debug("loginserver_extend", "auth", ok, servername, uid)
 
         return ok, servername, uid, secret
     end
