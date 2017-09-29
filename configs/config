@@ -44,8 +44,8 @@ loginserver_port = 8003
 loginserver_slave_instance = 8
 
 -- third party authenticate config (in loginserver)
-auth_host = "192.168.3.2"
-auth_url = "/auth.php"
+auth_host = "devzhihu.zhangpei.online"
+auth_url = "/api/auth"
 
 -- gateserver config
 gateserver_host = "127.0.0.1"

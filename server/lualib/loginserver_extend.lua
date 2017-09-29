@@ -102,7 +102,7 @@ local function launch_slave(auth_handler)
         local token = crypt.desdecode(secret, crypt.base64decode(etoken))
 
         local ok, servername, uid = pcall(auth_handler, token)
-        logger.debug("loginserver_extend", "auth", ok, servername, uid)
+        logger.info("loginserver_extend", "auth", ok, servername, uid)
 
         return ok, servername, uid, secret
     end

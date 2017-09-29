@@ -18,11 +18,6 @@ local users = {}
 -- use for command_handler
 local CMD = {}
 
-skynet.register_protocol {
-    name = "client",
-    id = skynet.PTYPE_CLIENT,
-}
-
 -- register for gateserver_extend
 local handler = {}
 

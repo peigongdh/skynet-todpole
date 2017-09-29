@@ -7,7 +7,7 @@ local skynet = require("skynet")
 local gateserver = require("snax.gateserver")
 -- can not use socket
 local socketdriver = require("socketdriver")
-local netpack = require("netpack")
+local netpack = require("skynet.netpack")
 local crypt = require("crypt")
 local logger = require("logger")
 
@@ -52,6 +52,11 @@ Config for server.start
     handler.register_handler(source, loginsrv, servername) : called when gate open
     handler.disconnect_handler(uid) : called when a connection disconnected(afk)
 ]]
+
+--skynet.register_protocol {
+--    name = "client",
+--    id = skynet.PTYPE_CLIENT
+--}
 
 local server = {}
 
@@ -148,7 +153,7 @@ function server.start(handler)
         local response
         local ok, result = pcall(doauth, fd, message, ipaddr)
         if not ok then
-            logger.warn("gateserver_extend", "bad request", message)
+            logger.warn("gateserver_extend", result, message)
             -- handshake fail
             response = "400 Bad Request"
         end
@@ -220,6 +225,7 @@ function server.start(handler)
     end
 
     function gateserver_handler.message(fd, msg, sz)
+        logger.debug("gatewayserver", fd, msg)
         local ipaddr = handshake[fd]
         local message = netpack.toString(msg, sz)
         if ipaddr then

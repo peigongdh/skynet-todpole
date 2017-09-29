@@ -146,7 +146,6 @@ function lib.contact_gateserver(servername, uid, handshake_index, secret)
     local handshake = string.format("%s@%s#%d", uid, crypt.base64encode(servername), handshake_index)
     local hmac = crypt.hmac64(crypt.hashkey(handshake), secret)
     local text = handshake .. ":" .. crypt.base64encode(hmac)
-
     lib.send_package(text)
 
     local resp = blockread_package()

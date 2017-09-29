@@ -39,7 +39,7 @@ local function authenticate(platform, token)
 
     if auth[platform] then
         local func = auth[platform]
-        uid = func(platform, token)
+        uid, _ = func(platform, token)
 
         if not uid then
             logger.error("login_implement", "auth failed", platform, token)
@@ -67,7 +67,6 @@ function CMD.logout(uid)
 
     if user then
         logger.info("login_implement", "user uid", uid, "logout server", user.servername)
-
         onlineuser_list[uid] = nil
     end
 end
@@ -77,7 +76,6 @@ end
 -- verify token and return servername, uid for user
 function handler.auth_handler(token)
     -- the token is base64(platform)@base64(platform_token):base64(servername)
-    logger.info("login_implement", "login auth token", token)
     local platform, platform_token, servername = token:match("([^@]+)@([^:]+):(.+)")
 
     platform = crypt.base64decode(platform)
