@@ -6,10 +6,11 @@
 local skynet = require("skynet")
 local gateserver = require("snax.gateserver")
 -- can not use socket
-local socketdriver = require("socketdriver")
+local socketdriver = require("skynet.socketdriver")
 local netpack = require("skynet.netpack")
-local crypt = require("crypt")
+local crypt = require("skynet.crypt")
 local logger = require("logger")
+local string_utils = require("string_utils")
 
 local base64encode = crypt.base64encode
 local base64decode = crypt.base64decode
@@ -53,10 +54,10 @@ Config for server.start
     handler.disconnect_handler(uid) : called when a connection disconnected(afk)
 ]]
 
---skynet.register_protocol {
---    name = "client",
---    id = skynet.PTYPE_CLIENT
---}
+skynet.register_protocol {
+    name = "client",
+    id = skynet.PTYPE_CLIENT
+}
 
 local server = {}
 
@@ -122,8 +123,10 @@ function server.start(handler)
     local function doauth(fd, message, ipaddr)
         -- format uid@base64(server)#index:base64(hmac)
         local uid, servername, index, hmac = string.match(message, "([^@]*)@([^#]*)#([^:]*):(.*)")
+        logger.debug("gateserver_extend", uid, servername, index, hmac)
         hmac = base64decode(hmac)
 
+        logger.debug("gateserver_extend", string_utils.dump(user_online))
         local user = user_online[tonumber(uid)]
         if user == nil then
             return "404 User Not Found"
@@ -147,25 +150,22 @@ function server.start(handler)
         user.ip = ipaddr
 
         connection[fd] = user
+
+        return "200 OK"
     end
 
     local function auth(fd, ipaddr, message)
-        local response
-        local ok, result = pcall(doauth, fd, message, ipaddr)
+        local ok, response = pcall(doauth, fd, message, ipaddr)
         if not ok then
-            logger.warn("gateserver_extend", result, message)
+            logger.warn("gateserver_extend", response, message)
             -- handshake fail
             response = "400 Bad Request"
-        end
-
-        if result == nil then
-            response = "200 OK"
         end
 
         -- notify client handshake result
         socketdriver.send(fd, netpack.pack(response))
 
-        if result == nil then
+        if response == "200 OK" then
             -- auth success
             local user = connection[fd]
             if user then
@@ -225,9 +225,8 @@ function server.start(handler)
     end
 
     function gateserver_handler.message(fd, msg, sz)
-        logger.debug("gatewayserver", fd, msg)
+        local message = netpack.tostring(msg, sz)
         local ipaddr = handshake[fd]
-        local message = netpack.toString(msg, sz)
         if ipaddr then
             handshake[fd] = nil
             auth(fd, ipaddr, message)

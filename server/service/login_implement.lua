@@ -113,6 +113,7 @@ function handler.login_handler(servername, uid, secret)
     end
 
     -- notify gateserver to login this user
+    logger.debug("login_implement", "login_handler", type(uid), uid)
     skynet.call(serveraddr, "lua", "login", uid, secret)
 
     onlineuser_list[uid] = {

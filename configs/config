@@ -44,7 +44,7 @@ loginserver_port = 8003
 loginserver_slave_instance = 8
 
 -- third party authenticate config (in loginserver)
-auth_host = "devzhihu.zhangpei.online"
+auth_host = "devzhihu.papa91.com"
 auth_url = "/api/auth"
 
 -- gateserver config

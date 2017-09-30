@@ -23,13 +23,14 @@ local handler = {}
 
 -- called by login server after login complete
 function handler.login_handler(uid, secret)
+    logger.debug("gate_implement", "login_handler", type(uid), uid)
     if users[uid] then
         error(string.format("%s is already login", uid))
     end
 
     local agent = skynet.call(watchdog, "lua", "alloc_agent", uid)
     if not agent then
-        logger.error("gate_implement", "uid", "authed success, but login failed")
+        logger.error("gate_implement", uid, "authed success, but login failed")
         error("init agent failed")
     end
 
