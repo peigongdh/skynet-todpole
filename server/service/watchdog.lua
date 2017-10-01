@@ -9,9 +9,6 @@ local logger = require("logger")
 -- uid -> agent
 local user_agent = {}
 
--- agent free pool
-local agentpool = {}
-
 -- init in CMD.start
 local gateservice
 local loginservice
@@ -19,6 +16,28 @@ local loginservice
 -- use for dispatch
 local CMD = {}
 local SOCKET = {}
+
+-- agent list
+local agentpool = {}
+
+local agentpool_min_size = tonumber(skynet.getenv("agentpool_min_size")) or 10
+
+--
+local function precreate_agents_to_freepool()
+    if #agentpool < agentpool_min_size then
+        local need_create = agentpool_min_size - #agentpool
+        logger.info("watchdog", "create agent for agentpool", need_create)
+        for i = 1, need_create do
+            local agent = skynet.newservice("agent")
+            local conf = {
+                watchdog = skynet.self()
+            }
+            skynet.call(agent, "lua", "start", conf)
+
+            agentpool[#agentpool + 1] = agent
+        end
+    end
+end
 
 -- called in CMD.logout
 local function do_logout(uid)
@@ -51,11 +70,13 @@ function SOCKET.data(fd, msg)
 
 end
 
+-- called by main
 function CMD.start(conf)
     gateservice = conf.gateservice
     loginservice = conf.loginservice
 
     skynet.call(gateservice, "lua", "open", conf)
+    precreate_agents_to_freepool()
 end
 
 -- called by gate server when login complete

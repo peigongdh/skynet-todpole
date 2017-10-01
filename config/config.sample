@@ -50,3 +50,6 @@ auth_url = "/api/auth"
 -- gateserver config
 gateserver_host = "127.0.0.1"
 gateserver_port = 8004
+
+-- agentpool
+agentpool_min_size = 10
