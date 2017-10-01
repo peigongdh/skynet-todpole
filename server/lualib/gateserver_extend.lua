@@ -54,11 +54,6 @@ Config for server.start
     handler.disconnect_handler(uid) : called when a connection disconnected(afk)
 ]]
 
-skynet.register_protocol {
-    name = "client",
-    id = skynet.PTYPE_CLIENT
-}
-
 local server = {}
 
 -- uid -> user {uid, secret, handshake_index, fd, ip}
@@ -123,10 +118,9 @@ function server.start(handler)
     local function doauth(fd, message, ipaddr)
         -- format uid@base64(server)#index:base64(hmac)
         local uid, servername, index, hmac = string.match(message, "([^@]*)@([^#]*)#([^:]*):(.*)")
-        logger.debug("gateserver_extend", uid, servername, index, hmac)
+
         hmac = base64decode(hmac)
 
-        logger.debug("gateserver_extend", string_utils.dump(user_online))
         local user = user_online[tonumber(uid)]
         if user == nil then
             return "404 User Not Found"
@@ -169,7 +163,7 @@ function server.start(handler)
             -- auth success
             local user = connection[fd]
             if user then
-                handler.auth_handler(user.uid, user.fd, user.ip)
+                handler.authed_handler(user.uid, user.fd, user.ip)
             else
                 logger.error("gateserver_extend", "auth verify success but no user found for fd", fd)
             end
@@ -207,10 +201,10 @@ function server.start(handler)
         local result
         if CMD[cmd] then
             f = CMD[cmd]
-            result = f(source, ...)
+            result = f(...)
         else
             f = CMD.othercmd
-            result = f(cmd, source, ...)
+            result = f(cmd, ...)
         end
         return result
     end

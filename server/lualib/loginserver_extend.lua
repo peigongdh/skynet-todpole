@@ -6,14 +6,14 @@ local table = table
 local string = string
 local assert = assert
 
-local dns = require("dns")
 local logger = require("logger")
 
 --[[
 
 Protocol:
 
-	line (\n) based text protocol
+	Binary protocol, 2 bytes package length follows actual data
+		2-bytes-length real-data
 
 	1. Server->Client : base64(8bytes random challenge)
 	2. Client->Server : base64(8bytes handshake client key)
@@ -23,8 +23,8 @@ Protocol:
 	6. Client->Server : base64(HMAC(challenge, secret))
 	7. Client->Server : DES(secret, base64(token))
 	8. Server : call auth_handler(token) -> server, uid (A user defined method)
-	9. Server : call login_handler(server, uid, secret) ->subid (A user defined method)
-	10. Server->Client : 200 base64(subid)
+	9. Server : call login_handler(servername, uid, secret) -> servername
+	10. Server->Client : 200 base64(servername) uid
 
 Error Code:
 	400 Bad Request . challenge failed
@@ -33,7 +33,7 @@ Error Code:
 	406 Not Acceptable . already in login (disallow multi login)
 
 Success:
-	200 base64(subid)
+	200 base64(server) uid
 ]]
 
 local socket_error = {}
@@ -160,16 +160,16 @@ local function accept(conf, s, fd, addr)
         user_login[uid] = true
     end
 
-    local ok, gateservername = pcall(conf.login_handler, server, uid, secret)
+    local ok, servername = pcall(conf.login_handler, server, uid, secret)
     -- unlock login
     user_login[uid] = nil
 
     if ok then
-        gateservername = gateservername or ""
-        write("response 200", fd, "200 " .. crypt.base64encode(gateservername) .. " " .. uid)
+        servername = servername or ""
+        write("response 200", fd, "200 " .. crypt.base64encode(servername) .. " " .. uid)
     else
         write("response 403", fd, "403 Forbidden")
-        error(gateservername)
+        error(servername)
     end
 end
 

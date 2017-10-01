@@ -7,7 +7,7 @@ local skynet = require("skynet")
 local httpc = require("http.httpc")
 local logger = require("logger")
 local cjson = require("cjson")
-
+local string_utils = require("string_utils")
 
 local auth_host = skynet.getenv("auth_host")
 local auth_url = skynet.getenv("auth_url")
@@ -27,6 +27,7 @@ function auth.skynet_todpole(platform, token)
     local ok, status, body = pcall(httpc.post, auth_host, auth_url, postfields, recvheader)
     if ok then
         local resp = cjson.decode(body)
+        logger.debug("auth", string_utils.dump(body))
         if resp.status == "success" then
             uid = resp.data.id
             username = resp.data.name

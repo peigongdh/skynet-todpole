@@ -27,7 +27,7 @@ local function do_logout(uid)
         -- logout from gate server, gate server then informs login server to logout
         skynet.call(gateservice, "lua", "logout", uid)
 
-        local can_recycle = skynet.call(agent, "lua", "clear")
+        local can_recycle = skynet.call(agent, "lua", "logout")
         if can_recycle then
             user_agent[uid] = nil
             agentpool[#agentpool + 1] = agent
@@ -90,7 +90,11 @@ function CMD.alloc_agent(uid)
     return agent
 end
 
--- called by agent when user logout
+function CMD.client_auth_completed(agent, fd, ip)
+    skynet.call(agent, "lua", "associate_fd_ip", fd, ip)
+end
+
+-- called by agent when user logout or gateserver when kick user
 function CMD.logout(uid)
     logger.info("watchdog", "user uid", uid, "logout")
     do_logout(uid)

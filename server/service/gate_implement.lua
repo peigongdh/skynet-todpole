@@ -5,12 +5,18 @@
 
 local skynet = require("skynet")
 local gateserver_extend = require("gateserver_extend")
+local string_utils = require("string_utils")
 local logger = require("logger")
 
 -- init in handler.register_handler
 local watchdog
 local loginservice
 local servername
+
+skynet.register_protocol {
+    name = "client",
+    id = skynet.PTYPE_CLIENT
+}
 
 -- uid -> {agent, uid}
 local users = {}
@@ -23,7 +29,6 @@ local handler = {}
 
 -- called by login server after login complete
 function handler.login_handler(uid, secret)
-    logger.debug("gate_implement", "login_handler", type(uid), uid)
     if users[uid] then
         error(string.format("%s is already login", uid))
     end
@@ -49,7 +54,8 @@ function handler.logout_handler(uid)
     local user = users[uid]
     if user then
         gateserver_extend.set_logout(uid)
-        user[uid] = nil
+        users[uid] = nil
+        logger.info("gate_implement", "user uid", uid, "logout server")
 
         -- inform login server to logout
         skynet.call(loginservice, "lua", "logout", uid)
@@ -58,17 +64,35 @@ end
 
 -- called by loginserver when user login repeat
 function handler.kick_handler(uid)
-
+    local user = users[uid]
+    if user then
+        skynet.call(watchdog, "lua", "logout", uid)
+        logger.info("gate_implement", "kick user", uid)
+    else
+        logger.warn("gate_implement", "kick failed, user not exist", uid)
+    end
 end
 
---
+-- auth completed, notify watchdogG
 function handler.authed_handler(uid, fd, ip)
-
+    local user = users[uid]
+    local agent = user.agent
+    if agent then
+        skynet.call(watchdog, "lua", "client_auth_completed", agent, fd, ip)
+    else
+        logger.error("gated", "fd", fd, "auth success but not found associated agent, ip", ip)
+    end
 end
 
 -- the function when recv a new request.
-function handler.request_handler(uid, session, msg)
-
+function handler.request_handler(uid, message)
+    local user = users[uid]
+    local agent = user.agent
+    if agent then
+        skynet.redirect(agent, 0, "client", 0, message)
+    else
+        -- todo
+    end
 end
 
 -- called when gate open, register self to loginserver

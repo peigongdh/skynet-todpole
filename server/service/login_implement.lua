@@ -103,17 +103,14 @@ function handler.login_handler(servername, uid, secret)
 
     -- kick repeat login user
     if last then
-        logger.warn("login_implement", "user", uid, "is already online, notify gateserver to kick this user")
+        logger.warn("login_implement", "user", uid, "is already online, notify gate server to kick this user")
         skynet.call(last.address, "lua", "kick", uid)
-    end
 
-    -- we disable multilogin so that login_handler should not called twice
-    if last then
-        error(string.format("user %d is already online", uid))
+        -- disable this login
+        error(string.format("user %d relogin", uid))
     end
 
     -- notify gateserver to login this user
-    logger.debug("login_implement", "login_handler", type(uid), uid)
     skynet.call(serveraddr, "lua", "login", uid, secret)
 
     onlineuser_list[uid] = {
@@ -122,7 +119,7 @@ function handler.login_handler(servername, uid, secret)
         address = serveraddr
     }
 
-    return uid
+    return servername
 end
 
 function handler.command_handler(command, ...)

@@ -74,7 +74,6 @@ end
 function lib.send_package(pack)
     if fd then
         local package = string.pack(">s2", pack)
-        print(pack .. " send package: " .. package)
         socket.send(fd, package)
     end
 end

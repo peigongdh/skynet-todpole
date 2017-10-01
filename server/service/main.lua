@@ -1,5 +1,6 @@
-local skynet = require "skynet"
-local logger = require "logger"
+local skynet = require("skynet")
+local logger = require("logger")
+local sprotoloader = require("sprotoloader")
 
 skynet.start(function()
     logger.info("main", "Server start")
@@ -12,6 +13,8 @@ skynet.start(function()
     skynet.newservice("simpleweb")
     skynet.newservice("events")
     -- skynet.newservice("testsocket", "", 0)
+
+    skynet.uniqueservice("protoloader")
 
     local loginservice = skynet.uniqueservice("login_implement")
     local gateservice = skynet.uniqueservice("gate_implement")

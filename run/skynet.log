@@ -1,4 +1,4 @@
-[:00000001] LAUNCH logger ./run/skynet.log
+[:00000001] LAUNCH logger /home/kingnet/project/skynet_todpole/run/skynet.log
 [:00000002] LAUNCH snlua bootstrap
 [:00000003] LAUNCH snlua launcher
 [:00000004] LAUNCH snlua cdummy
@@ -6,32 +6,142 @@
 [:00000006] LAUNCH snlua datacenterd
 [:00000007] LAUNCH snlua service_mgr
 [:00000008] LAUNCH snlua main
-[:00000008] [2017-09-18 21:26:59] [info] [main] Server start
+[:00000008] Server start
 [:00000009] LAUNCH snlua debug_console 8000
-[:00000009] init service failed: ./skynet/lualib/skynet/socket.lua:360: Listen error
-stack traceback:
-	[C]: in function 'skynet.socketdriver.listen'
-	./skynet/lualib/skynet/socket.lua:360: in function 'skynet.socket.listen'
-	./skynet/service/debug_console.lua:120: in local 'start'
-	./skynet/lualib/skynet.lua:629: in function <./skynet/lualib/skynet.lua:626>
-	[C]: in function 'xpcall'
-	./skynet/lualib/skynet.lua:633: in function 'skynet.pcall'
-	./skynet/lualib/skynet.lua:637: in function 'skynet.init_service'
-	./skynet/lualib/skynet.lua:650: in upvalue 'f'
-	./skynet/lualib/skynet.lua:106: in function <./skynet/lualib/skynet.lua:105>
-[:00000009] KILL self
-[:00000008] init service failed: ./skynet/lualib/skynet.lua:391: call failed
-stack traceback:
-	[C]: in function 'error'
-	./skynet/lualib/skynet.lua:391: in upvalue 'yield_call'
-	./skynet/lualib/skynet.lua:402: in function 'skynet.call'
-	(...tail calls...)
-	./server/service/main.lua:9: in local 'start'
-	./skynet/lualib/skynet.lua:629: in function <./skynet/lualib/skynet.lua:626>
-	[C]: in function 'xpcall'
-	./skynet/lualib/skynet.lua:633: in function 'skynet.pcall'
-	./skynet/lualib/skynet.lua:637: in function 'skynet.init_service'
-	./skynet/lualib/skynet.lua:650: in upvalue 'f'
-	./skynet/lualib/skynet.lua:106: in function <./skynet/lualib/skynet.lua:105>
+[:00000009] Start debug console at 127.0.0.1 8000
+[:0000000a] LAUNCH snlua simpleweb
+[:0000000b] LAUNCH snlua simpleweb agent
+[:0000000c] LAUNCH snlua simpleweb agent
+[:0000000d] LAUNCH snlua simpleweb agent
+[:0000000e] LAUNCH snlua simpleweb agent
+[:0000000f] LAUNCH snlua simpleweb agent
+[:00000010] LAUNCH snlua simpleweb agent
+[:00000011] LAUNCH snlua simpleweb agent
+[:00000012] LAUNCH snlua simpleweb agent
+[:00000013] LAUNCH snlua simpleweb agent
+[:00000014] LAUNCH snlua simpleweb agent
+[:00000015] LAUNCH snlua simpleweb agent
+[:00000016] LAUNCH snlua simpleweb agent
+[:00000017] LAUNCH snlua simpleweb agent
+[:00000018] LAUNCH snlua simpleweb agent
+[:00000019] LAUNCH snlua simpleweb agent
+[:0000001a] LAUNCH snlua simpleweb agent
+[:0000001b] LAUNCH snlua simpleweb agent
+[:0000001c] LAUNCH snlua simpleweb agent
+[:0000001d] LAUNCH snlua simpleweb agent
+[:0000001e] LAUNCH snlua simpleweb agent
+[:0000000a] Listen web port 8001
+[:0000001f] LAUNCH snlua events
+[:0000001f] Listening 0.0.0.0:8002
 [:00000008] KILL self
 [:00000002] KILL self
+[:0000000a] 192.168.70.60:58861 connected, pass it to agent :0000000b
+[:0000000a] 192.168.70.60:58862 connected, pass it to agent :0000000c
+[:0000000a] 192.168.70.60:58867 connected, pass it to agent :0000000d
+[:0000000a] 192.168.70.60:58914 connected, pass it to agent :0000000e
+[:0000000a] 192.168.70.60:59007 connected, pass it to agent :0000000f
+[:0000000a] 192.168.70.60:59008 connected, pass it to agent :00000010
+[:0000000a] 192.168.70.60:59010 connected, pass it to agent :00000011
+[:0000000a] 192.168.70.60:59009 connected, pass it to agent :00000012
+[:0000000f] lua call [0 to :f : 0 msgsz = 24] error : [31m.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:516: .../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:155: /home/kingnet/project/skynet_todpole/service/simpleweb.lua:22: web/index: No such file or directory
+stack traceback:
+	[C]: in function 'assert'
+	/home/kingnet/project/skynet_todpole/service/simpleweb.lua:22: in upvalue 'read_file'
+	/home/kingnet/project/skynet_todpole/service/simpleweb.lua:53: in upvalue 'f'
+	.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:109: in function <.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:103>
+stack traceback:
+	[C]: in function 'assert'
+	.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:516: in function 'skynet.dispatch_message'[0m
+[:00000010] socket closed
+[:00000012] socket closed
+[:00000011] socket closed
+[:0000000a] 192.168.70.60:59027 connected, pass it to agent :00000013
+[:0000000a] 192.168.70.60:59026 connected, pass it to agent :00000014
+[:0000000a] 192.168.70.60:59028 connected, pass it to agent :00000015
+[:0000000a] 192.168.70.60:59029 connected, pass it to agent :00000016
+[:0000000a] 192.168.70.60:59030 connected, pass it to agent :00000017
+[:0000000a] 192.168.70.60:59032 connected, pass it to agent :00000018
+[:0000000a] 192.168.70.60:59031 connected, pass it to agent :00000019
+[:0000000a] 192.168.70.60:59033 connected, pass it to agent :0000001a
+[:0000000a] 192.168.70.60:59034 connected, pass it to agent :0000001b
+[:0000000a] 192.168.70.60:59035 connected, pass it to agent :0000001c
+[:0000000a] 192.168.70.60:59036 connected, pass it to agent :0000001d
+[:0000000a] 192.168.70.60:59037 connected, pass it to agent :0000001e
+[:0000000a] 192.168.70.60:59039 connected, pass it to agent :0000000b
+[:0000000a] 192.168.70.60:59038 connected, pass it to agent :0000000c
+[:0000000a] 192.168.70.60:59040 connected, pass it to agent :0000000d
+[:0000000a] 192.168.70.60:59041 connected, pass it to agent :0000000e
+[:0000000a] 192.168.70.60:59042 connected, pass it to agent :0000000f
+[:0000000a] 192.168.70.60:59043 connected, pass it to agent :00000010
+[:0000000a] 192.168.70.60:59044 connected, pass it to agent :00000011
+[:0000000a] 192.168.70.60:59045 connected, pass it to agent :00000012
+[:0000000a] 192.168.70.60:59046 connected, pass it to agent :00000013
+[:0000000a] 192.168.70.60:59047 connected, pass it to agent :00000014
+[:0000000a] 192.168.70.60:59048 connected, pass it to agent :00000015
+[:0000000a] 192.168.70.60:59049 connected, pass it to agent :00000016
+[:0000000a] 192.168.70.60:59050 connected, pass it to agent :00000017
+[:0000000a] 192.168.70.60:59051 connected, pass it to agent :00000018
+[:0000000a] 192.168.70.60:59057 connected, pass it to agent :00000019
+[:0000000a] 192.168.70.60:59134 connected, pass it to agent :0000001a
+[:0000000a] 192.168.70.60:59135 connected, pass it to agent :0000001b
+[:0000000a] 192.168.70.60:59136 connected, pass it to agent :0000001c
+[:0000000a] 192.168.70.60:59137 connected, pass it to agent :0000001d
+[:0000000a] 192.168.70.60:59138 connected, pass it to agent :0000001e
+[:0000000a] 192.168.70.60:59139 connected, pass it to agent :0000000b
+[:0000000a] 192.168.70.60:59140 connected, pass it to agent :0000000c
+[:0000000a] 192.168.70.60:59141 connected, pass it to agent :0000000d
+[:0000000a] 192.168.70.60:59142 connected, pass it to agent :0000000e
+[:0000000a] 192.168.70.60:59143 connected, pass it to agent :0000000f
+[:0000000a] 192.168.70.60:59144 connected, pass it to agent :00000010
+[:0000000a] 192.168.70.60:59145 connected, pass it to agent :00000011
+[:0000000a] 192.168.70.60:59146 connected, pass it to agent :00000012
+[:0000000a] 192.168.70.60:59147 connected, pass it to agent :00000013
+[:0000000a] 192.168.70.60:59148 connected, pass it to agent :00000014
+[:0000000a] 192.168.70.60:59149 connected, pass it to agent :00000015
+[:0000000a] 192.168.70.60:59150 connected, pass it to agent :00000016
+[:0000000a] 192.168.70.60:59151 connected, pass it to agent :00000017
+[:0000000a] 192.168.70.60:59152 connected, pass it to agent :00000018
+[:0000000a] 192.168.70.60:59153 connected, pass it to agent :00000019
+[:0000000a] 192.168.70.60:59154 connected, pass it to agent :0000001a
+[:0000000a] 192.168.70.60:59155 connected, pass it to agent :0000001b
+[:0000000a] 192.168.70.60:59156 connected, pass it to agent :0000001c
+[:0000000a] 192.168.70.60:59157 connected, pass it to agent :0000001d
+[:0000000a] 192.168.70.60:59158 connected, pass it to agent :0000001e
+[:0000000a] 192.168.70.60:59159 connected, pass it to agent :0000000b
+[:0000000a] 192.168.70.60:59163 connected, pass it to agent :0000000c
+[:0000000a] 192.168.70.60:60126 connected, pass it to agent :0000000d
+[:0000000a] 192.168.70.60:60128 connected, pass it to agent :0000000e
+[:0000000a] 192.168.70.60:60129 connected, pass it to agent :0000000f
+[:0000000a] 192.168.70.60:60130 connected, pass it to agent :00000010
+[:0000000a] 192.168.70.60:60131 connected, pass it to agent :00000011
+[:0000000a] 192.168.70.60:60133 connected, pass it to agent :00000012
+[:0000000a] 192.168.70.60:60132 connected, pass it to agent :00000013
+[:0000000a] 192.168.70.60:60134 connected, pass it to agent :00000014
+[:0000000a] 192.168.70.60:60135 connected, pass it to agent :00000015
+[:0000000a] 192.168.70.60:60136 connected, pass it to agent :00000016
+[:0000000a] 192.168.70.60:60137 connected, pass it to agent :00000017
+[:0000000a] 192.168.70.60:60138 connected, pass it to agent :00000018
+[:0000000a] 192.168.70.60:60139 connected, pass it to agent :00000019
+[:0000000a] 192.168.70.60:60140 connected, pass it to agent :0000001a
+[:0000000a] 192.168.70.60:60141 connected, pass it to agent :0000001b
+[:0000000a] 192.168.70.60:60142 connected, pass it to agent :0000001c
+[:0000000a] 192.168.70.60:60143 connected, pass it to agent :0000001d
+[:0000000a] 192.168.70.60:60144 connected, pass it to agent :0000001e
+[:0000000a] 192.168.70.60:60145 connected, pass it to agent :0000000b
+[:0000000a] 192.168.70.60:60146 connected, pass it to agent :0000000c
+[:0000000a] 192.168.70.60:60147 connected, pass it to agent :0000000d
+[:0000000a] 192.168.70.60:60148 connected, pass it to agent :0000000e
+[:0000000a] 192.168.70.60:60149 connected, pass it to agent :0000000f
+[:0000000a] 192.168.70.60:60150 connected, pass it to agent :00000010
+[:0000000a] 192.168.70.60:60151 connected, pass it to agent :00000011
+[:0000000a] 192.168.70.60:60152 connected, pass it to agent :00000012
+[:0000000a] 192.168.70.60:60157 connected, pass it to agent :00000013
+[:00000013] lua call [0 to :13 : 0 msgsz = 24] error : [31m.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:516: .../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:155: /home/kingnet/project/skynet_todpole/service/simpleweb.lua:22: web/proto/CommonMessage.proto: No such file or directory
+stack traceback:
+	[C]: in function 'assert'
+	/home/kingnet/project/skynet_todpole/service/simpleweb.lua:22: in upvalue 'read_file'
+	/home/kingnet/project/skynet_todpole/service/simpleweb.lua:53: in upvalue 'f'
+	.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:109: in function <.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:103>
+stack traceback:
+	[C]: in function 'assert'
+	.../kingnet/project/skynet_todpole/skynet/lualib/skynet.lua:516: in function 'skynet.dispatch_message'[0m

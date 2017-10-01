@@ -12,10 +12,9 @@ local root = "../../../"
 package.cpath = root .. "skynet/luaclib/?.so;" ..
 root .. "server/luaclib/?.so"
 package.path = root .. "skynet/lualib/?.lua;" ..
-root .. "server/lualib/?.lua;" ..
-root .. "server/service/?.lua;" ..
 root .. "client/?.lua;" ..
-root .. "configs/?.lua"
+root .. "config/?.lua;" ..
+root .. "shared_lib/?.lua"
 
 local socket = require("client.socket")
 local clientsocket = require("clientsocket")
@@ -119,7 +118,6 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
     while true do
         dispatch_package()
         local stdin = socket.readstdin()
-
         if stdin then
             local arr = string_utils.split_string(stdin)
             local cmd = arr[1]
