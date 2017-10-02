@@ -27,6 +27,9 @@ local agentstate = {
     userdata = {}
 }
 
+-- use for check idle
+local agent_session_expire = skynet.getenv("agent_session_expire") or 3
+
 -- use for handle client request
 local REQUEST = {}
 
@@ -34,6 +37,15 @@ function REQUEST.logout(args)
     skynet.call(watchdog, "lua", "logout", agentstate.userdata.uid)
 end
 
+
+
+local function clear_agentstate()
+    agentstate.fd = nil
+    agentstate.ip = nil
+    agentstate.afk = false
+    agentstate.last_active = 0
+    agentstate.userdata = {}
+end
 
 -- user for skynet dispatch
 local CMD = {}
@@ -72,14 +84,32 @@ end
 
 -- called by watchdog
 function CMD.logout()
-    agentstate.fd = nil
-    agentstate.ip = nil
-    agentstate.afk = false
-    agentstate.last_active = 0
-    agentstate.userdata = {}
-
+    clear_agentstate()
     return true
 end
+
+-- called by watchdog
+function CMD.check_idle()
+    local now = skynet.time()
+    local timepassed = now - agentstate.last_active
+    if timepassed >= agent_session_expire then
+        skynet.call(watchdog, "lua", "recycle_agent", agentstate.userdata.uid)
+    end
+end
+
+-- called by watchdog
+function CMD.persisent()
+    logger.debug("agent", "persisent")
+    -- todo
+end
+
+-- called by watchdog to logout user
+function CMD.recycle()
+    logger.debug("agent", "recycle")
+    clear_agentstate()
+end
+
+
 
 local function handle_client_request(name, args, response)
     local f = assert(REQUEST[name])

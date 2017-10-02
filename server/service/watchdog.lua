@@ -6,9 +6,6 @@
 local skynet = require("skynet")
 local logger = require("logger")
 
--- uid -> agent
-local user_agent = {}
-
 -- init in CMD.start
 local gateservice
 local loginservice
@@ -20,9 +17,19 @@ local SOCKET = {}
 -- agent list
 local agentpool = {}
 
+-- use for agent pool
 local agentpool_min_size = tonumber(skynet.getenv("agentpool_min_size")) or 10
 
---
+-- use for agent recycle & persisent
+local check_idle_agent_time = tonumber(skynet.getenv("check_idle_agent_time")) or 5
+local check_recycle_agent_time = tonumber(skynet.getenv("check_recycle_agent_time")) or 5
+local check_persisent_agent_time = tonumber(skynet.getenv("check_persisent_agent_time")) or 10
+-- uid -> agent
+local user_agent = {}
+-- [uid]
+local recycle_agent_queue = {}
+
+-- precreate agents
 local function precreate_agents_to_freepool()
     if #agentpool < agentpool_min_size then
         local need_create = agentpool_min_size - #agentpool
@@ -37,6 +44,69 @@ local function precreate_agents_to_freepool()
             agentpool[#agentpool + 1] = agent
         end
     end
+end
+
+local function check_idle_agent()
+    logger.debug("watchdog", "check_idle_agent")
+
+    for _, agent in pairs(user_agent) do
+        skynet.call(agent, "lua", "check_idle")
+    end
+end
+
+local function check_recycle_agent()
+    logger.debug("watchdog", "check_recycle_agent")
+
+    if #recycle_agent_queue > 0 then
+        for _, uid in pairs(recycle_agent_queue) do
+            local agent = user_agent[uid]
+            if agent then
+                skynet.call(gateservice, "lua", "logout", uid)
+                local can_recycle = skynet.call(agent, "lua", "logout")
+                if can_recycle then
+                    skynet.call(agent, "lua", "persisent")
+                    skynet.call(agent, "lua", "recycle")
+
+                    user_agent[uid] = nil
+                    agentpool[#agentpool + 1] = agent
+                end
+            end
+        end
+        recycle_agent_queue = {}
+    end
+end
+
+local function check_persisent_agent()
+    logger.debug("watchdog", "check_persisent_agent")
+
+    for _, agent in pairs(user_agent) do
+        skynet.call(agent, "lua", "persistent")
+    end
+end
+
+-- do agent recycle & persisent
+local function watchdog_timer(idle_count, recycle_count, persisent_count)
+    precreate_agents_to_freepool()
+
+    idle_count = idle_count + 1
+    recycle_count = recycle_count + 1
+    persisent_count = persisent_count + 1
+
+    if idle_count >= check_idle_agent_time then
+        idle_count = 0
+        check_idle_agent()
+    end
+    if recycle_count >= check_recycle_agent_time then
+        recycle_count = 0
+        check_recycle_agent()
+    end
+    if persisent_count >= check_persisent_agent_time then
+        persisent_count = 0
+        check_persisent_agent()
+    end
+    skynet.timeout(100, function()
+        watchdog_timer(idle_count, recycle_count, persisent_count)
+    end)
 end
 
 -- called in CMD.logout
@@ -76,7 +146,9 @@ function CMD.start(conf)
     loginservice = conf.loginservice
 
     skynet.call(gateservice, "lua", "open", conf)
-    precreate_agents_to_freepool()
+    skynet.timeout(100, function()
+        watchdog_timer(0, 0, 0)
+    end)
 end
 
 -- called by gate server when login complete
@@ -122,12 +194,17 @@ function CMD.logout(uid)
     return true
 end
 
+-- called by watchdog after agent check idle
+function CMD.recycle_agent(uid)
+    recycle_agent_queue[#recycle_agent_queue + 1] = uid
+end
+
 function CMD.close(fd)
 
 end
 
 skynet.start(function()
-    skynet.dispatch("lua", function(session, source, cmd, subcmd,...)
+    skynet.dispatch("lua", function(session, source, cmd, subcmd, ...)
         if cmd == "socket" then
             local f = SOCKET[subcmd]
             f(...)
