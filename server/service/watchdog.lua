@@ -20,10 +20,10 @@ local agentpool = {}
 -- use for agent pool
 local agentpool_min_size = tonumber(skynet.getenv("agentpool_min_size")) or 10
 
--- use for agent recycle & persisent
+-- use for agent recycle & persistent
 local check_idle_agent_time = tonumber(skynet.getenv("check_idle_agent_time")) or 5
 local check_recycle_agent_time = tonumber(skynet.getenv("check_recycle_agent_time")) or 5
-local check_persisent_agent_time = tonumber(skynet.getenv("check_persisent_agent_time")) or 10
+local check_persistent_agent_time = tonumber(skynet.getenv("check_persistent_agent_time")) or 10
 -- uid -> agent
 local user_agent = {}
 -- [uid]
@@ -64,7 +64,7 @@ local function check_recycle_agent()
                 skynet.call(gateservice, "lua", "logout", uid)
                 local can_recycle = skynet.call(agent, "lua", "logout")
                 if can_recycle then
-                    skynet.call(agent, "lua", "persisent")
+                    skynet.call(agent, "lua", "persistent")
                     skynet.call(agent, "lua", "recycle")
 
                     user_agent[uid] = nil
@@ -76,21 +76,21 @@ local function check_recycle_agent()
     end
 end
 
-local function check_persisent_agent()
-    logger.debug("watchdog", "check_persisent_agent")
+local function check_persistent_agent()
+    logger.debug("watchdog", "check_persistent_agent")
 
     for _, agent in pairs(user_agent) do
         skynet.call(agent, "lua", "persistent")
     end
 end
 
--- do agent recycle & persisent
-local function watchdog_timer(idle_count, recycle_count, persisent_count)
+-- do agent recycle & persistent
+local function watchdog_timer(idle_count, recycle_count, persistent_count)
     precreate_agents_to_freepool()
 
     idle_count = idle_count + 1
     recycle_count = recycle_count + 1
-    persisent_count = persisent_count + 1
+    persistent_count = persistent_count + 1
 
     if idle_count >= check_idle_agent_time then
         idle_count = 0
@@ -100,12 +100,12 @@ local function watchdog_timer(idle_count, recycle_count, persisent_count)
         recycle_count = 0
         check_recycle_agent()
     end
-    if persisent_count >= check_persisent_agent_time then
-        persisent_count = 0
-        check_persisent_agent()
+    if persistent_count >= check_persistent_agent_time then
+        persistent_count = 0
+        check_persistent_agent()
     end
     skynet.timeout(100, function()
-        watchdog_timer(idle_count, recycle_count, persisent_count)
+        watchdog_timer(idle_count, recycle_count, persistent_count)
     end)
 end
 

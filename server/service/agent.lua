@@ -98,8 +98,8 @@ function CMD.check_idle()
 end
 
 -- called by watchdog
-function CMD.persisent()
-    logger.debug("agent", "persisent")
+function CMD.persistent()
+    logger.debug("agent", "persistent")
     -- todo
 end
 
