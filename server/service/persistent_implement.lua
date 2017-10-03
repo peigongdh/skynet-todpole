@@ -218,7 +218,7 @@ else
 
     -- timer
     local function process_task_queue()
-        logger.debug("persistent_implement", "process_task_queue")
+        -- logger.debug("persistent_implement", "process_task_queue")
         for taskid, task in pairs(save_queue) do
             if not task.sended_to_slave then
                 local slave = getslave()

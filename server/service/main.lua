@@ -16,6 +16,9 @@ skynet.start(function()
 
     skynet.uniqueservice("protoloader")
 
+    skynet.uniqueservice("room_implement")
+    skynet.uniqueservice("persistent_implement")
+
     local loginservice = skynet.uniqueservice("login_implement")
     local gateservice = skynet.uniqueservice("gate_implement")
     local watchdog = skynet.uniqueservice("watchdog")

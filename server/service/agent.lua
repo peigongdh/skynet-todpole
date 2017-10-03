@@ -10,6 +10,7 @@ local sproto = require("sproto")
 local sprotoloader = require("sprotoloader")
 local string_utils = require("string_utils")
 local logger = require("logger")
+local room = require("room")
 
 -- use for sproto, init when CMD.start
 local host
@@ -39,6 +40,19 @@ function REQUEST.logout(args)
     skynet.call(watchdog, "lua", "logout", agentstate.userdata.uid)
 end
 
+function REQUEST.enter_room(args)
+    assert(args.room_id)
+    local room_id = args.room_id
+    local response = room.enter_room(room_id, agentstate.userdata, skynet.self())
+    return response
+end
+
+function REQUEST.list_members()
+    assert(agentstate.userdata.uid)
+    local uid = agentstate.userdata.uid
+    local response = room.list_members(uid)
+    return response
+end
 
 -- do not clear userdata here
 local function clear_agentstate()
@@ -126,7 +140,6 @@ end
 local function handle_client_request(name, args, response)
     local f = assert(REQUEST[name])
     local result = f(args)
-
     if response then
         return response(result)
     end

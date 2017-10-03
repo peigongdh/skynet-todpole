@@ -60,13 +60,13 @@ local function handle_package(t, ...)
         assert(REQ_FROM_SERVER[name], "no REQ_FROM_SERVER handler found for: " .. name)
         local f = REQ_FROM_SERVER[name]
         f(args)
-    elseif t == "REPONSE" then
-        local session = arr[1]
+    elseif t == "RESPONSE" then
+        local s = arr[1]
         local args = arr[2]
 
-        local name = session_map[session]
+        local name = session_map[s]
         if name then
-            session_map[session] = nil
+            session_map[s] = nil
             assert(RESP_FROM_SERVER[name], "no RESP_FROM_SERVER handler found for: " .. name)
             local f = RESP_FROM_SERVER[name]
             f(args)
@@ -82,6 +82,22 @@ local function dispatch_package()
         end
 
         handle_package(host:dispatch(v))
+    end
+end
+
+function RESP_FROM_SERVER.enter_room(args)
+    local result = args.result
+    if result then
+        print("enter room success")
+    else
+        print("enter room failed")
+    end
+end
+
+function RESP_FROM_SERVER.list_members(args)
+    local members = args.members
+    for _, member in pairs(members) do
+        print(member.uid .. "  " .. member.name .. "  " .. member.exp)
     end
 end
 
@@ -122,7 +138,19 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
             local arr = string_utils.split_string(stdin)
             local cmd = arr[1]
 
-            if cmd == "logout" then
+            if cmd == "enter_room" then
+                local room_id = arr[2]
+                if not room_id then
+                    print("usage: enter_room room_id")
+                else
+                    room_id = tonumber(room_id)
+                    send_request("enter_room", {
+                        room_id = room_id
+                    })
+                end
+            elseif cmd == "list_members" then
+                send_request("list_members", {})
+            elseif cmd == "logout" then
                 send_request("logout", {})
             end
         else

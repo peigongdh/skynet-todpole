@@ -86,7 +86,7 @@ end
 
 -- do agent recycle & persistent
 local function watchdog_timer(idle_count, recycle_count, persistent_count)
-    logger.debug("watchdog", "watchdog_timer")
+    -- logger.debug("watchdog", "watchdog_timer")
     precreate_agents_to_freepool()
 
     idle_count = idle_count + 1

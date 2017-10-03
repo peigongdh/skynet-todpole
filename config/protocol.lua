@@ -10,7 +10,7 @@ local typedefs = [[
  
 	.user {
 		uid 0 : integer
-		username 1 : string
+		name 1 : string
 		exp 2 : integer
 	}
 
@@ -45,7 +45,7 @@ local client2server = [[
 	#enter specific room
 	enter_room 3 {
 		request {
-			roomid 0 : integer
+			room_id 0 : integer
 		}
 		response {
 			result 0 : boolean
