@@ -73,7 +73,7 @@ function handler.kick_handler(uid)
     end
 end
 
--- auth completed, notify watchdogG
+-- auth completed, notify watchdog
 function handler.authed_handler(uid, fd, ip)
     local user = users[uid]
     local agent = user.agent

@@ -17,7 +17,7 @@ end
 
 function handler.on_message(ws, message)
     logger.debug("events", string.format("%d receive:%s", ws.id, message))
-    local messageObj = cjson.decode(message);
+    local messageObj = cjson.decode(message)
     if messageObj.type == "authorize" then
         logger.debug("events", string.format("%d receive:%s", ws.id, message))
     elseif messageObj.type == "update" then

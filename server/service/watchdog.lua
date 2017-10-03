@@ -55,7 +55,7 @@ local function check_idle_agent()
 end
 
 local function check_recycle_agent()
-    logger.debug("watchdog", "check_recycle_agent")
+    logger.debug("watchdog", "check_recycle_agent start")
 
     if #recycle_agent_queue > 0 then
         for _, uid in pairs(recycle_agent_queue) do
@@ -86,6 +86,7 @@ end
 
 -- do agent recycle & persistent
 local function watchdog_timer(idle_count, recycle_count, persistent_count)
+    logger.debug("watchdog", "watchdog_timer")
     precreate_agents_to_freepool()
 
     idle_count = idle_count + 1
@@ -104,6 +105,7 @@ local function watchdog_timer(idle_count, recycle_count, persistent_count)
         persistent_count = 0
         check_persistent_agent()
     end
+
     skynet.timeout(100, function()
         watchdog_timer(idle_count, recycle_count, persistent_count)
     end)
@@ -183,6 +185,7 @@ function CMD.alloc_agent(uid)
     return agent
 end
 
+-- called by gate server when auth completed
 function CMD.client_auth_completed(agent, fd, ip)
     skynet.call(agent, "lua", "associate_fd_ip", fd, ip)
 end

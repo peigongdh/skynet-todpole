@@ -160,11 +160,11 @@ local function accept(conf, s, fd, addr)
         user_login[uid] = true
     end
 
-    local ok, servername = pcall(conf.login_handler, server, uid, secret)
+    local ok2, servername = pcall(conf.login_handler, server, uid, secret)
     -- unlock login
     user_login[uid] = nil
 
-    if ok then
+    if ok2 then
         servername = servername or ""
         write("response 200", fd, "200 " .. crypt.base64encode(servername) .. " " .. uid)
     else

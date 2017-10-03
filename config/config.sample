@@ -53,3 +53,21 @@ gateserver_port = 8004
 
 -- agentpool
 agentpool_min_size = 10
+
+-- use for agent recycle & persisent
+check_idle_agent_time = 5
+check_recycle_agent_time = 5
+check_persisent_agent_time = 10
+
+-- agent
+agent_session_expire = 3
+
+-- persistent
+persistent_slave_poolsize = 8
+
+--mysql conf
+mysql_host = "127.0.0.1"
+mysql_port = 3306
+mysql_username = "root"
+mysql_password = "zhangpei"
+mysql_database = "todpole"

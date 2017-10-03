@@ -5,8 +5,10 @@
 
 local skynet = require("skynet")
 local socket = require("socket")
+local persistent = require("persistent")
 local sproto = require("sproto")
 local sprotoloader = require("sprotoloader")
+local string_utils = require("string_utils")
 local logger = require("logger")
 
 -- use for sproto, init when CMD.start
@@ -28,7 +30,7 @@ local agentstate = {
 }
 
 -- use for check idle
-local agent_session_expire = skynet.getenv("agent_session_expire") or 3
+local agent_session_expire = tonumber(skynet.getenv("agent_session_expire")) or 3
 
 -- use for handle client request
 local REQUEST = {}
@@ -38,13 +40,12 @@ function REQUEST.logout(args)
 end
 
 
-
+-- do not clear userdata here
 local function clear_agentstate()
     agentstate.fd = nil
     agentstate.ip = nil
-    agentstate.afk = false
+    agentstate.afk = true
     agentstate.last_active = 0
-    agentstate.userdata = {}
 end
 
 -- user for skynet dispatch
@@ -61,11 +62,23 @@ end
 
 -- called by watchdog when alloc agent
 function CMD.load_user_data(uid)
-    local userdata = {
-        uid = tonumber(uid)
-    }
-    agentstate.userdata = userdata
-    return true
+    local userdata = persistent.load_user_data(uid)
+    if userdata then
+        logger.debug("agent", "load user data success", string_utils.dump(userdata))
+        agentstate.userdata = userdata
+        return true
+    else
+        logger.debug("agent", "load user data failed, try craete user data, uid", uid)
+        userdata = persistent.create_user_data(uid, "GUEST-" .. uid)
+        if userdata then
+            logger.debug("agent", "craete user data success", string_utils.dump(userdata))
+            agentstate.userdata = userdata
+            return true
+        else
+            logger.error("agent", "craete user data failed, uid", uid)
+            return false
+        end
+    end
 end
 
 -- called by watchdog when auth completed
@@ -99,14 +112,13 @@ end
 
 -- called by watchdog
 function CMD.persistent()
-    logger.debug("agent", "persistent")
-    -- todo
+    persistent.save_user_data(agentstate.userdata)
 end
 
--- called by watchdog to logout user
+-- called by watchdog, last step to reset agent
 function CMD.recycle()
-    logger.debug("agent", "recycle")
     clear_agentstate()
+    agentstate.userdata = {}
 end
 
 
