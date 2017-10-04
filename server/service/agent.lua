@@ -11,6 +11,7 @@ local sprotoloader = require("sprotoloader")
 local string_utils = require("string_utils")
 local logger = require("logger")
 local room = require("room")
+local statelogging = require("statelogging")
 
 -- use for sproto, init when CMD.start
 local host
@@ -37,6 +38,7 @@ local agent_session_expire = tonumber(skynet.getenv("agent_session_expire")) or 
 local REQUEST = {}
 
 function REQUEST.logout(args)
+    statelogging.log_user_logout( agentstate.userdata.uid, agentstate.ip)
     skynet.call(watchdog, "lua", "logout", agentstate.userdata.uid)
 end
 

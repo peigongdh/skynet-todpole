@@ -90,9 +90,9 @@ local function room_init()
 end
 
 skynet.start(function()
+    room_init()
     skynet.dispatch("lua", function(session, source, cmd, ...)
         local f = assert(CMD[cmd])
         skynet.ret(skynet.pack(f(...)))
     end)
-    room_init()
 end)

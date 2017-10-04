@@ -57,7 +57,7 @@ agentpool_min_size = 10
 -- use for agent recycle & persisent
 check_idle_agent_time = 60
 check_recycle_agent_time = 60
-check_persisent_agent_time = 600
+check_persistent_agent_time = 600
 
 -- agent
 agent_session_expire = 300
@@ -71,3 +71,9 @@ mysql_port = 3306
 mysql_username = "root"
 mysql_password = "zhangpei"
 mysql_database = "todpole"
+
+-- redis conf
+redis_host = "127.0.0.1"
+redis_port = 6379
+redis_db = 0
+redis_logging_queue_name = "TODPOLE_LOG"

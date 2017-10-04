@@ -5,15 +5,15 @@
 
 local skynet = require("skynet")
 local datetime_utils = require("datetime_utils")
-local mysql = require("mysql")
+local mysql = require("skynet.db.mysql")
 local logger = require("logger")
 local string_utils = require("string_utils")
 
-local mysql_host = skynet.getenv "mysql_host" or ""
-local mysql_port = tonumber(skynet.getenv "mysql_port" or 3306)
-local mysql_username = skynet.getenv "mysql_username" or ""
-local mysql_password = skynet.getenv "mysql_password" or ""
-local mysql_database = skynet.getenv "mysql_database" or ""
+local mysql_host = skynet.getenv("mysql_host") or ""
+local mysql_port = tonumber(skynet.getenv("mysql_port" ) or 3306)
+local mysql_username = skynet.getenv("mysql_username") or ""
+local mysql_password = skynet.getenv("mysql_password") or ""
+local mysql_database = skynet.getenv("mysql_database") or ""
 
 local PERSISTENT_TYPES = {
     SAVE_USER_DATA = 'save_user_data'

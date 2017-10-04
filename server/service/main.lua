@@ -15,9 +15,9 @@ skynet.start(function()
     -- skynet.newservice("testsocket", "", 0)
 
     skynet.uniqueservice("protoloader")
-
     skynet.uniqueservice("room_implement")
     skynet.uniqueservice("persistent_implement")
+    skynet.uniqueservice("statelogging_implement")
 
     local loginservice = skynet.uniqueservice("login_implement")
     local gateservice = skynet.uniqueservice("gate_implement")
@@ -35,7 +35,6 @@ skynet.start(function()
         loginservice = loginservice,
         gateservice = gateservice
     }
-
     skynet.call(watchdog, "lua", "start", gateconf)
 
     skynet.exit()
