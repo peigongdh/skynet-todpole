@@ -99,7 +99,6 @@ function RESP_FROM_SERVER.list_rooms(args)
     for _, room_info in pairs(room_infos) do
         print(room_info.id .. "  " .. room_info.name)
     end
-
 end
 
 function RESP_FROM_SERVER.list_members(args)
@@ -107,6 +106,12 @@ function RESP_FROM_SERVER.list_members(args)
     for _, member in pairs(members) do
         print(member.uid .. "  " .. member.name .. "  " .. member.exp)
     end
+end
+
+function REQ_FROM_SERVER.enter_room_message(args)
+    local user_info = args.user_info
+    local room_id = args.room_id
+    print(user_info.uid .. "  " .. user_info.name .. "  " .. user_info.exp .. " enter room " .. room_id)
 end
 
 local function mainloop(loginserver_host, loginserver_port, gateserver_host, gateserver_port, username, password)

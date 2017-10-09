@@ -34,6 +34,16 @@ local agentstate = {
 -- use for check idle
 local agent_session_expire = tonumber(skynet.getenv("agent_session_expire")) or 3
 
+
+local function send_package(pack)
+    if not agentstate.fd then
+        return
+    end
+
+    local package = string.pack(">s2", pack)
+    socket.write(agentstate.fd, package)
+end
+
 -- use for handle client request
 local REQUEST = {}
 
@@ -71,6 +81,19 @@ end
 
 -- user for skynet dispatch
 local CMD = {}
+
+-- called by room_implement
+function CMD.notify_user_enter_room(room_id, userdata)
+    local data = {
+        user_info = {
+            uid = userdata.uid,
+            name = userdata.name,
+            exp = userdata.exp
+        },
+        room_id = room_id
+    }
+    send_package(make_request("enter_room_message", data))
+end
 
 -- called by watchdog when alloc agent
 function CMD.start(conf)

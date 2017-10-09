@@ -122,10 +122,8 @@ local client2server = [[
 local server2client = [[
 	enter_room_message 1 {
 		request {
-			uid 0 : integer
-			username 1 : string
-			exp 2 : integer
-			roomid 3 : integer
+			user_info 0 : user
+			room_id 1 : integer
 		}
 	}
 	leave_room_message 2 {

@@ -24,12 +24,14 @@ function CMD.enter_room(room_id, userdata, agent)
 
     local room = room_list[room_id]
     if room then
+        -- send notify to each member in room
+        for _, v in pairs(room.members) do
+            skynet.call(v.agent, "lua", "notify_user_enter_room", room_id, userdata)
+        end
+
         room.members[userdata.uid] = member
         room_list[room_id] = room
         uid2roomid[userdata.uid] = room_id
-
-        -- send notify to each member in room
-        -- todo
 
         return {
             result = true
@@ -45,7 +47,7 @@ end
 function CMD.list_rooms()
     local room_infos = {}
     for _, room in pairs(room_list) do
-        room_infos [#room_infos + 1]= room.info
+        room_infos [#room_infos + 1] = room.info
     end
     return {
         room_infos = room_infos
