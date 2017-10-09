@@ -17,6 +17,10 @@ function room.list_members(uid)
     return skynet.call(room_implement, "lua", "list_members", uid)
 end
 
+function room.list_rooms()
+    return skynet.call(room_implement, "lua", "list_rooms")
+end
+
 function room.leave_room(uid)
 
 end

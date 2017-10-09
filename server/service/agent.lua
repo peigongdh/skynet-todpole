@@ -42,6 +42,11 @@ function REQUEST.logout(args)
     skynet.call(watchdog, "lua", "logout", agentstate.userdata.uid)
 end
 
+function REQUEST.list_rooms(args)
+    local reponse = room.list_rooms()
+    return reponse
+end
+
 function REQUEST.enter_room(args)
     assert(args.room_id)
     local room_id = args.room_id

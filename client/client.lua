@@ -94,6 +94,14 @@ function RESP_FROM_SERVER.enter_room(args)
     end
 end
 
+function RESP_FROM_SERVER.list_rooms(args)
+    local room_infos = args.room_infos
+    for _, room_info in pairs(room_infos) do
+        print(room_info.id .. "  " .. room_info.name)
+    end
+
+end
+
 function RESP_FROM_SERVER.list_members(args)
     local members = args.members
     for _, member in pairs(members) do
@@ -148,6 +156,8 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
                         room_id = room_id
                     })
                 end
+            elseif cmd == "list_rooms" then
+                send_request("list_rooms", {})
             elseif cmd == "list_members" then
                 send_request("list_members", {})
             elseif cmd == "logout" then

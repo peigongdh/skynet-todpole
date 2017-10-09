@@ -15,10 +15,8 @@ local typedefs = [[
 	}
 
 	.roominfo {
-		room_id 0 : integer
-		room_name 1 : string
-		room_exp 2 : integer
-		room_exp_interval 3 : integer
+		id 0 : integer
+		name 1 : string
 	}
 ]]
 
@@ -38,7 +36,7 @@ local client2server = [[
 		request {
 		}
 		response {
-			rooms 0 : *roominfo
+			room_infos 0 : *roominfo
 		}
 	}
 

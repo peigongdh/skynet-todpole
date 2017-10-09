@@ -42,6 +42,16 @@ function CMD.enter_room(room_id, userdata, agent)
     end
 end
 
+function CMD.list_rooms()
+    local room_infos = {}
+    for _, room in pairs(room_list) do
+        room_infos [#room_infos + 1]= room.info
+    end
+    return {
+        room_infos = room_infos
+    }
+end
+
 function CMD.list_members(uid)
     local room_id = uid2roomid[uid]
     if not room_id then
