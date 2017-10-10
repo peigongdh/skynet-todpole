@@ -126,7 +126,13 @@ end
 function REQ_FROM_SERVER.enter_room_message(args)
     local user_info = args.user_info
     local room_id = args.room_id
-    print(user_info.uid .. "  " .. user_info.name .. "  " .. user_info.exp .. " enter room " .. room_id)
+    print(user_info.uid .. " " .. user_info.name .. " " .. user_info.exp .. " enter room " .. room_id)
+end
+
+function REQ_FROM_SERVER.leave_room_message(args)
+    local user_info = args.user_info
+    local room_id = args.room_id
+    print(user_info.uid .. " " .. user_info.name .. " " .. user_info.exp .. " leave room " .. room_id)
 end
 
 local function mainloop(loginserver_host, loginserver_port, gateserver_host, gateserver_port, username, password)

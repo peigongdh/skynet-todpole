@@ -37,7 +37,7 @@ function CMD.enter_room(room_id, userdata, agent)
             result = true
         }
     else
-        logger.error("room_implement", "invalid room_id", room_id)
+        logger.warn("room_implement", "invalid room_id", room_id)
         return {
             result = false
         }
@@ -55,6 +55,15 @@ function CMD.leave_room(uid)
 
     local room = room_list[room_id]
     assert(room, "room not exist in room_list")
+
+    local userdata = room.members[uid].userdata
+
+    -- send notify to each member in room
+    for k, v in pairs(room.members) do
+        if k ~= uid then
+            skynet.call(v.agent, "lua", "notify_user_leave_room", room_id, userdata)
+        end
+    end
 
     -- clear user
     room.members[uid] = nil

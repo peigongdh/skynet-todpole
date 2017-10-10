@@ -112,6 +112,19 @@ function CMD.notify_user_enter_room(room_id, userdata)
     send_package(make_request("enter_room_message", data))
 end
 
+-- called by room_implement
+function CMD.notify_user_leave_room(room_id, userdata)
+    local data = {
+        user_info = {
+            uid = userdata.uid,
+            name = userdata.name,
+            exp = userdata.exp
+        },
+        room_id = room_id
+    }
+    send_package(make_request("leave_room_message", data))
+end
+
 -- called by watchdog when alloc agent
 function CMD.start(conf)
     watchdog = conf.watchdog
