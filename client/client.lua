@@ -123,6 +123,24 @@ function RESP_FROM_SERVER.list_members(args)
     end
 end
 
+function RESP_FROM_SERVER.say_public(args)
+    local result = args.result
+    if result then
+        print("say public success")
+    else
+        print("say public failed")
+    end
+end
+
+function RESP_FROM_SERVER.say_private(args)
+    local result = args.result
+    if result then
+        print("say private success")
+    else
+        print("say private failed")
+    end
+end
+
 function REQ_FROM_SERVER.enter_room_message(args)
     local user_info = args.user_info
     local room_id = args.room_id
@@ -133,6 +151,13 @@ function REQ_FROM_SERVER.leave_room_message(args)
     local user_info = args.user_info
     local room_id = args.room_id
     print(user_info.uid .. " " .. user_info.name .. " " .. user_info.exp .. " leave room " .. room_id)
+end
+
+function REQ_FROM_SERVER.talking_message(args)
+    local from_user_info = args.from_user_info
+    local talking_type = args.talking_type
+    local content = args.content
+    print(from_user_info.name .. " say " .. talking_type .. " : " .. content)
 end
 
 local function mainloop(loginserver_host, loginserver_port, gateserver_host, gateserver_port, username, password)
@@ -188,6 +213,26 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
                 send_request("list_rooms", {})
             elseif cmd == "list_members" then
                 send_request("list_members", {})
+            elseif cmd == "say_public" then
+                local content = arr[2]
+                if not content then
+                    print("usage: say_public content")
+                else
+                    send_request("say_public", {
+                        content = content
+                    })
+                end
+            elseif cmd == "say_private" then
+                local to_uid = arr[2]
+                local content = arr[3]
+                if not content then
+                    print("usage: say_private uid content")
+                else
+                    send_request("say_private", {
+                        to_uid = to_uid,
+                        content = content
+                    })
+                end
             elseif cmd == "logout" then
                 send_request("logout", {})
             end

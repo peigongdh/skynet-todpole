@@ -118,6 +118,60 @@ function CMD.list_members(uid)
     end
 end
 
+function CMD.say_public(uid, content)
+    local room_id = uid2roomid[uid]
+    if not room_id then
+        logger.warn("room_implement", "say_public", "uid not exist", uid)
+        return {
+            result = false
+        }
+    end
+
+    local room = room_list[room_id]
+    assert(room, "room not exist in room_list")
+
+    local userdata = room.members[uid].userdata
+
+    -- send notify to each member in room
+    for k, v in pairs(room.members) do
+        if k ~= uid then
+            skynet.call(v.agent, "lua", "notify_user_talking_message", userdata, v.userdata, "public", content)
+        end
+    end
+
+    return {
+        result = true
+    }
+end
+
+function CMD.say_private(from_uid, to_uid, content)
+    local room_id = uid2roomid[from_uid]
+    if not room_id then
+        logger.warn("room_implement", "say_private", "from_uid not exist", from_uid)
+        return {
+            result = false
+        }
+    end
+
+    local room = room_list[room_id]
+    assert(room, "room not exist in room_list")
+
+    local from_userdata = room.members[from_uid].userdata
+    local to_member = room.members[to_uid]
+    if not to_member then
+        logger.warn("room_implement", "say_private", "to_uid not exist in room", to_uid, room_id)
+        return {
+            result = false
+        }
+    end
+
+    skynet.call(to_member.agent, "lua", "notify_user_talking_message", from_userdata, to_member.userdata, "private", content)
+
+    return {
+        result = true
+    }
+end
+
 local function room_init()
     for _, v in pairs(room_conf) do
         local room = {

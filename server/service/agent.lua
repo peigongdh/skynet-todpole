@@ -47,7 +47,7 @@ end
 -- use for handle client request
 local REQUEST = {}
 
-function REQUEST.logout(args)
+function REQUEST.logout(_)
     local uid = agentstate.userdata.uid
     assert(uid, "agent not init")
     skynet.call(watchdog, "lua", "logout", uid)
@@ -55,7 +55,7 @@ function REQUEST.logout(args)
     statelogging.log_user_logout( agentstate.userdata.uid, agentstate.ip)
 end
 
-function REQUEST.list_rooms(args)
+function REQUEST.list_rooms(_)
     local reponse = room.list_rooms()
     return reponse
 end
@@ -73,18 +73,48 @@ function REQUEST.enter_room(args)
     return response
 end
 
-function REQUEST.leave_room(args)
-    logger.debug("agent", "leave_room")
+function REQUEST.leave_room(_)
     local uid = agentstate.userdata.uid
     assert(uid, "agent not init")
     local response = room.leave_room(uid)
     return response
 end
 
-function REQUEST.list_members()
+function REQUEST.list_members(_)
     local uid = agentstate.userdata.uid
     assert(uid, "agent not init")
     local response = room.list_members(uid)
+    return response
+end
+
+function REQUEST.say_public(args)
+    local content = args.content
+    if not content then
+        return {
+            result = false
+        }
+    end
+
+    local uid = agentstate.userdata.uid
+    assert(uid, "agent not init")
+
+    local response = room.say_public(uid, content)
+    return response
+end
+
+function REQUEST.say_private(args)
+    local to_uid = args.to_uid
+    local content = args.content
+    if not to_uid or not content then
+        return {
+            result = false
+        }
+    end
+
+    local from_uid = agentstate.userdata.uid
+    assert(from_uid, "agent not init")
+
+    local response = room.say_private(from_uid, to_uid, content)
     return response
 end
 
@@ -123,6 +153,17 @@ function CMD.notify_user_leave_room(room_id, userdata)
         room_id = room_id
     }
     send_package(make_request("leave_room_message", data))
+end
+
+-- called by room_implement
+function CMD.notify_user_talking_message(from_userdata, to_userdata, talking_type, content)
+    local data = {
+        from_user_info = from_userdata,
+        to__user_info = to_userdata,
+        talking_type = talking_type,
+        content = content
+    }
+    send_package(make_request("talking_message", data))
 end
 
 -- called by watchdog when alloc agent

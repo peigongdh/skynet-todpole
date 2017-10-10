@@ -25,6 +25,14 @@ function room.list_rooms()
     return skynet.call(room_implement, "lua", "list_rooms")
 end
 
+function room.say_public(uid, content)
+    return skynet.call(room_implement, "lua", "say_public", uid, content)
+end
+
+function room.say_private(from_uid, to_uid, content)
+    return skynet.call(room_implement, "lua", "say_private", from_uid, to_uid, content)
+end
+
 local function start()
     room_implement = skynet.uniqueservice("room_implement")
 end

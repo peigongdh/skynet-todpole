@@ -82,7 +82,7 @@ local client2server = [[
 	#talk to specific user
 	say_private 7 {
 		request {
-			uid 0 : integer
+			to_uid 0 : integer
 			content 1 : string
 		}
 		response {
@@ -134,18 +134,19 @@ local server2client = [[
 	}
 	talking_message 3 {
 		request {
-			from_uid 0 : integer
-			to_uid 1 : integer
-			content 2 : string
+			from_user_info 0 : user
+			to_user_info 1 : user
+			talking_type 2 : string
+			content 3 : string
 		}
 	}
-	kick_message 4 {
+	kick_message 5 {
 		request {
 			from_uid 0 : integer
 			kicked_uid 1 : integer
 		}
 	}
-	exp_message 5 {
+	exp_message 6 {
 		request {
 			from_uid 0 : integer
 			to_uid 1 : integer
