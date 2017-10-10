@@ -48,8 +48,11 @@ end
 local REQUEST = {}
 
 function REQUEST.logout(args)
+    local uid = agentstate.userdata.uid
+    assert(uid, "agent not init")
+    skynet.call(watchdog, "lua", "logout", uid)
+
     statelogging.log_user_logout( agentstate.userdata.uid, agentstate.ip)
-    skynet.call(watchdog, "lua", "logout", agentstate.userdata.uid)
 end
 
 function REQUEST.list_rooms(args)
@@ -58,15 +61,29 @@ function REQUEST.list_rooms(args)
 end
 
 function REQUEST.enter_room(args)
-    assert(args.room_id)
     local room_id = args.room_id
+    if not room_id then
+        logger.warn("agent", "enter_room", "params error")
+        return {
+            result = false
+        }
+    end
+    assert(agentstate.userdata, "agent not init")
     local response = room.enter_room(room_id, agentstate.userdata, skynet.self())
     return response
 end
 
-function REQUEST.list_members()
-    assert(agentstate.userdata.uid)
+function REQUEST.leave_room(args)
+    logger.debug("agent", "leave_room")
     local uid = agentstate.userdata.uid
+    assert(uid, "agent not init")
+    local response = room.leave_room(uid)
+    return response
+end
+
+function REQUEST.list_members()
+    local uid = agentstate.userdata.uid
+    assert(uid, "agent not init")
     local response = room.list_members(uid)
     return response
 end

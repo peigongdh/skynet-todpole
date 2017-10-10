@@ -13,16 +13,16 @@ function room.enter_room(room_id, userdata, agent)
     return skynet.call(room_implement, "lua", "enter_room", room_id, userdata, agent)
 end
 
+function room.leave_room(uid)
+    return skynet.call(room_implement, "lua", "leave_room", uid)
+end
+
 function room.list_members(uid)
     return skynet.call(room_implement, "lua", "list_members", uid)
 end
 
 function room.list_rooms()
     return skynet.call(room_implement, "lua", "list_rooms")
-end
-
-function room.leave_room(uid)
-
 end
 
 local function start()

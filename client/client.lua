@@ -94,6 +94,15 @@ function RESP_FROM_SERVER.enter_room(args)
     end
 end
 
+function RESP_FROM_SERVER.leave_room(args)
+    local result = args.result
+    if result then
+        print("leave room success")
+    else
+        print("leave room failed")
+    end
+end
+
 function RESP_FROM_SERVER.list_rooms(args)
     local room_infos = args.room_infos
     for _, room_info in pairs(room_infos) do
@@ -102,6 +111,12 @@ function RESP_FROM_SERVER.list_rooms(args)
 end
 
 function RESP_FROM_SERVER.list_members(args)
+    local result = args.result
+    if not result then
+        print("list_members failed")
+        return
+    end
+
     local members = args.members
     for _, member in pairs(members) do
         print(member.uid .. "  " .. member.name .. "  " .. member.exp)
@@ -161,6 +176,8 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
                         room_id = room_id
                     })
                 end
+            elseif cmd == "leave_room" then
+                send_request("leave_room", {})
             elseif cmd == "list_rooms" then
                 send_request("list_rooms", {})
             elseif cmd == "list_members" then

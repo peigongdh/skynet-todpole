@@ -44,6 +44,28 @@ function CMD.enter_room(room_id, userdata, agent)
     end
 end
 
+function CMD.leave_room(uid)
+    local room_id = uid2roomid[uid]
+    if not room_id then
+        logger.warn("room_implement", "leave_room", "uid not exist", uid)
+        return {
+            result = false
+        }
+    end
+
+    local room = room_list[room_id]
+    assert(room, "room not exist in room_list")
+
+    -- clear user
+    room.members[uid] = nil
+    room_list[room_id] = room
+    uid2roomid[uid] = nil
+
+    return {
+        result = true
+    }
+end
+
 function CMD.list_rooms()
     local room_infos = {}
     for _, room in pairs(room_list) do
