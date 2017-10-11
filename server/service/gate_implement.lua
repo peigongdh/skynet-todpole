@@ -106,7 +106,11 @@ end
 
 -- called when a connection disconnected(afk)
 function handler.disconnect_handler(uid)
+    local user = users[uid]
+    local agent = user.agent
 
+    logger.info("gate_implement", "disconnect_handler", uid)
+    skynet.call(watchdog, "lua", "afk", agent, uid)
 end
 
 --

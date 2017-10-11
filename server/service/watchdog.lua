@@ -5,6 +5,7 @@
 
 local skynet = require("skynet")
 local logger = require("logger")
+local string_utils = require("string_utils")
 
 -- init in CMD.start
 local gateservice
@@ -120,6 +121,7 @@ local function do_logout(uid)
 
         local can_recycle = skynet.call(agent, "lua", "logout")
         if can_recycle then
+            logger.debug("watchdog", "do_logout", "clear user_agent list here")
             user_agent[uid] = nil
             agentpool[#agentpool + 1] = agent
         end
@@ -162,8 +164,10 @@ function CMD.alloc_agent(uid)
     else
         logger.info("watchdog", "alloc agent for user uid", uid)
         if #agentpool > 0 then
+            logger.info("watchdog", "use agent from agentpool")
             agent = table.remove(agentpool)
         else
+            logger.info("watchdog", "new agent service")
             agent = skynet.newservice("agent")
             local conf = {
                 watchdog = skynet.self()
@@ -190,16 +194,21 @@ function CMD.client_auth_completed(agent, fd, ip)
     skynet.call(agent, "lua", "associate_fd_ip", fd, ip)
 end
 
--- called by agent when user logout or gateserver when kick user
+-- called by agent when user logout or gate server when kick user
 function CMD.logout(uid)
     logger.info("watchdog", "user uid", uid, "logout")
     do_logout(uid)
     return true
 end
 
--- called by watchdog after agent check idle
+-- called by agent after agent check idle
 function CMD.recycle_agent(uid)
     recycle_agent_queue[#recycle_agent_queue + 1] = uid
+end
+
+-- called by gate server when disconnect
+function CMD.afk(agent, uid)
+    skynet.call(agent, "lua", "afk")
 end
 
 function CMD.close(fd)

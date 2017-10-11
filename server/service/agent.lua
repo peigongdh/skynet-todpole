@@ -131,12 +131,11 @@ function REQUEST.say_private(args)
     return response
 end
 
--- do not clear userdata here
+-- do not clear userdata here, need persistent
 local function clear_agentstate()
     agentstate.fd = nil
     agentstate.ip = nil
     agentstate.afk = true
-    agentstate.last_active = 0
 end
 
 -- user for skynet dispatch
@@ -225,6 +224,9 @@ end
 
 -- called by watchdog
 function CMD.logout()
+    logger.debug("agent", "logout", agentstate.userdata.uid)
+    room.leave_room(agentstate.userdata.uid)
+
     clear_agentstate()
     return true
 end
@@ -238,15 +240,27 @@ function CMD.check_idle()
     end
 end
 
--- called by watchdog
+-- called by watchdog or CMD.afk
 function CMD.persistent()
     persistent.save_user_data(agentstate.userdata)
 end
 
--- called by watchdog, last step to reset agent
+-- called by watchdog, reset agent for reuse
 function CMD.recycle()
+    agentstate = {
+        fd = nil,
+        ip = nil,
+        afk = false,
+        last_active = skynet.time(),
+        userdata = {}
+    }
+    return true
+end
+
+-- called by watchdog, do persistent, and wait for recycle
+function CMD.afk()
     clear_agentstate()
-    agentstate.userdata = {}
+    CMD.persistent()
 end
 
 

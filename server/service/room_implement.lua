@@ -47,7 +47,7 @@ end
 function CMD.leave_room(uid)
     local room_id = uid2roomid[uid]
     if not room_id then
-        logger.warn("room_implement", "leave_room", "uid not exist", uid)
+        logger.info("room_implement", "leave_room", "uid not exist", uid)
         return {
             result = false
         }
