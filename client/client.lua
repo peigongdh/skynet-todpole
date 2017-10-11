@@ -85,6 +85,11 @@ local function dispatch_package()
     end
 end
 
+function RESP_FROM_SERVER.whoami(args)
+    local user_info = args.user_info
+    print(user_info.uid .. "  " .. user_info.name .. "  " .. user_info.exp)
+end
+
 function RESP_FROM_SERVER.enter_room(args)
     local result = args.result
     if result then
@@ -197,7 +202,9 @@ local function mainloop(loginserver_host, loginserver_port, gateserver_host, gat
             local arr = string_utils.split_string(stdin)
             local cmd = arr[1]
 
-            if cmd == "enter_room" then
+            if cmd == "whoami" then
+                send_request("whoami", {})
+            elseif cmd == "enter_room" then
                 local room_id = arr[2]
                 if not room_id then
                     print("usage: enter_room room_id")

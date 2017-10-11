@@ -22,12 +22,12 @@ local typedefs = [[
 
 --message from client send to server
 local client2server = [[
-	#login to retrieve userinfo
-	login 1 {
+	#to retrieve userinfo
+	whoami 1 {
 		request {
 		}
 		response {
-			userinfo 0 : user
+			user_info 0 : user
 		}
 	}
 

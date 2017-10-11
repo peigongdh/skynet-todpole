@@ -47,6 +47,19 @@ end
 -- use for handle client request
 local REQUEST = {}
 
+function REQUEST.whoami(_)
+    assert(agentstate.userdata, "agent not init")
+    local user_info = {
+        uid = agentstate.userdata.uid,
+        name = agentstate.userdata.name,
+        exp = agentstate.userdata.exp
+    }
+    local response = {
+        user_info = user_info
+    }
+    return response
+end
+
 function REQUEST.logout(_)
     local uid = agentstate.userdata.uid
     assert(uid, "agent not init")
