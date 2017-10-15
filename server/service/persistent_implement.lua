@@ -6,6 +6,7 @@
 local skynet = require("skynet")
 local datetime_utils = require("datetime_utils")
 local mysql = require("skynet.db.mysql")
+local socketchannel = require("skynet.socketchannel")
 local logger = require("logger")
 local string_utils = require("string_utils")
 
@@ -153,6 +154,18 @@ if model == "slave" then
         end
     end
 
+    local function keep_mysql_alive()
+        skynet.fork(function()
+            while true do
+                if db and db ~= socketchannel.error then
+                    local sql = string.format("SELECT LAST_INSERT_ID()")
+                    db:query(sql)
+                end
+                skynet.sleep(6000)
+            end
+        end)
+    end
+
     skynet.start(function()
         skynet.dispatch("lua", function(_, _, cmd, ...)
             local f = assert(CMD[cmd])
@@ -161,6 +174,7 @@ if model == "slave" then
         end)
 
         init_mysql()
+        keep_mysql_alive()
     end)
 
 else
