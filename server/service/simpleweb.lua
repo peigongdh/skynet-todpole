@@ -15,6 +15,7 @@ if mode == "agent" then
 
     local function response(id, ...)
         local ok, err = httpd.write_response(socket_extend.writefunc(id), ...)
+        -- local ok, err = httpd.write_response(sockethelper.writefunc(id), ...)
         if not ok then
             -- if err == sockethelper.socket_error , that means socket closed.
             logger.info("simpleweb", string.format("fd = %d, %s", id, err))
@@ -37,25 +38,8 @@ if mode == "agent" then
                 if code ~= 200 then
                     response(id, code)
                 else
-                    local tmp = {}
-                    if header.host then
-                        table.insert(tmp, string.format("host: %s", header.host))
-                    end
                     local path, query = urllib.parse(url)
-                    table.insert(tmp, string.format("path: %s", path))
-                    if query then
-                        local q = urllib.parse_query(query)
-                        for k, v in pairs(q) do
-                            table.insert(tmp, string.format("query: %s= %s", k, v))
-                        end
-                    end
-                    table.insert(tmp, "-----header----")
-                    for k, v in pairs(header) do
-                        table.insert(tmp, string.format("%s = %s", k, v))
-                    end
                     local response_body = read_file(path)
-                    -- table.insert(tmp, "-----body----\n" .. body)
-                    -- response(id, code, table.concat(tmp,"\n"))
                     response(id, code, response_body)
                 end
             else
