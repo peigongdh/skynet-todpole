@@ -4,7 +4,6 @@ local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
 local urllib = require "http.url"
 local logger = require "logger"
-local socket_extend = require "socket_extend"
 
 local table = table
 local string = string
@@ -14,8 +13,7 @@ local mode = ...
 if mode == "agent" then
 
     local function response(id, ...)
-        local ok, err = httpd.write_response(socket_extend.writefunc(id), ...)
-        -- local ok, err = httpd.write_response(sockethelper.writefunc(id), ...)
+        local ok, err = httpd.write_response(sockethelper.writefunc(id), ...)
         if not ok then
             -- if err == sockethelper.socket_error , that means socket closed.
             logger.info("simpleweb", string.format("fd = %d, %s", id, err))
