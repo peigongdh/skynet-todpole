@@ -21,6 +21,8 @@ if mode == "agent" then
     end
 
     local function read_file(filename)
+        -- security problem
+        -- todo
         local f = assert(io.open("web" .. filename, "r"))
         local content = f:read("*all")
         f:close()
