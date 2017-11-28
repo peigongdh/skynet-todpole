@@ -23,7 +23,7 @@ if mode == "agent" then
     local function read_file(filename)
         -- security problem
         -- todo
-        local f = assert(io.open("web" .. filename, "r"))
+        local f = assert(io.open("web-todpole/" .. filename, "r"))
         local content = f:read("*all")
         f:close()
         return content

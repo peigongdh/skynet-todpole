@@ -4,3 +4,6 @@
 [submodule "skynet"]
 	path = skynet
 	url = git://github.com/cloudwu/skynet.git
+[submodule "web-todpole"]
+	path = web-todpole
+	url = git@github.com:peigongdh/web-todpole.git
