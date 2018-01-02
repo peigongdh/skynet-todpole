@@ -7,14 +7,13 @@ harbor = 0
 start = "main"
 bootstrap = "snlua bootstrap"
 
-luaservice = skynet_root .. "service/?.lua;" .. app_root .. "server/service/?.lua;" .. app_root .. "shared_service/?.lua"
+luaservice = skynet_root .. "service/?.lua;" .. app_root .. "server/service/?.lua;"
 lualoader = skynet_root .. "lualib/loader.lua"
 
-lua_path = app_root .. "server/lualib/?.lua;" .. skynet_root ..  "lualib/?.lua;" .. skynet_root .. "lualib/compat10/?.lua"
+lua_path = app_root .. "server/lualib/?.lua;" .. app_root .. "shared_lib/?.lua;" .. skynet_root ..  "lualib/?.lua;" .. skynet_root .. "lualib/compat10/?.lua"
 lua_cpath = skynet_root .. "luaclib/?.so;" .. app_root .. "server/luaclib/?.so"
 cpath = skynet_root .. "cservice/?.so"
 snax = app_root .. "server/service/?.lua"
-preload = app_root .. "preload/preload.lua"
 
 if $DAEMON then
 	logger = "./run/skynet.log"
@@ -34,43 +33,3 @@ simpleweb_agentpool = 10
 
 -- websocket
 websocket_port = 8002
-
--- loginserver config
-loginserver_host = "127.0.0.1"
-loginserver_port = 8003
-loginserver_slave_instance = 8
-
--- third party authenticate config (in loginserver)
-auth_host = "devzhihu.zhangpei.online"
-auth_url = "/api/auth"
-
--- gateserver config
-gateserver_host = "127.0.0.1"
-gateserver_port = 8004
-
--- agentpool
-agentpool_min_size = 10
-
--- use for agent recycle & persisent
-check_idle_agent_time = 60
-check_recycle_agent_time = 60
-check_persistent_agent_time = 600
-
--- agent
-agent_session_expire = 300
-
--- persistent
-persistent_slave_poolsize = 8
-
---mysql conf
-mysql_host = "127.0.0.1"
-mysql_port = 3306
-mysql_username = "root"
-mysql_password = "zhangpei"
-mysql_database = "todpole"
-
--- redis conf
-redis_host = "127.0.0.1"
-redis_port = 6379
-redis_db = 0
-redis_logging_queue_name = "TODPOLE_LOG"
